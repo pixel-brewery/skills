@@ -42,4 +42,22 @@ To update, choose a reviewed central commit, repeat the pinned `skills add`, reg
 ```sh
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -p '*_test.py'
+node scripts/verify-public-content.mjs
+node --test scripts/verify-public-content.spec.mjs
 ```
+
+The `Validate skills` GitHub Actions workflow runs both checks on pushes, pull
+requests, merge queues and manual dispatches with read-only repository permissions. Validation
+checks skill metadata, Python syntax and maintained relative references; the tests
+exercise accepted and rejected inheritance states. The aggregate `Quality Gate`
+check succeeds only when the validation job succeeds, and fails if that job fails,
+is cancelled or is skipped. Required branch checks are configured separately in
+GitHub; add `Quality Gate` after the workflow revision is published and the check
+has been observed.
+
+The public-content guard rejects excluded private project references in current
+tracked and new nonignored file names, source, symbolic links and decoded gzip
+archives. It handles case variations and UTF-8/UTF-16LE content, fails closed on
+malformed archives and leaves ignored local artifacts outside the source scan.
+Its behavior tests include content split across stream boundaries and large
+compressed archives. Node.js 24 runs the dependency-free guard and tests.

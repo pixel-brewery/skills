@@ -2,18 +2,42 @@ name: Validate skills
 on:
   push:
   pull_request:
+  merge_group:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: "24"
       - run: python3 scripts/validate.py
       - run: python3 -m unittest discover -s tests -p '*_test.py'
+      - run: node scripts/verify-public-content.mjs
+      - run: node --test scripts/verify-public-content.spec.mjs
+  quality-gate:
+    name: Quality Gate
+    needs: validate
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Require successful skill validation and inheritance tests
+        shell: bash
+        env:
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+        run: |
+          if [ "$VALIDATE_RESULT" != success ]; then
+            echo 'Skill validation and inheritance tests must succeed.' >&2
+            exit 1
+          fi
