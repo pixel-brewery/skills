@@ -37,6 +37,44 @@ The validator uses Python 3 and Node.js (the same locale-aware content-hash orde
 
 To update, choose a reviewed central commit, repeat the pinned `skills add`, regenerate client projections and rerun the check. A pinned install remains on that commit until deliberately updated. Keep changes to project policy in the derived skill; changes to shared foundations belong here.
 
+## Mosaik design
+
+[`skills/mosaik-design`](skills/mosaik-design/SKILL.md) is the Mosaik designer for composition, redesign, usability/accessibility review, responsive behavior, states and visual polish. It detects the target application, framework, output surface and existing foundations before choosing guidance, even when the user does not name Mosaik. It covers Claude Design canvases, Angular, React, Vue, Svelte, Lit/HTML and Mosaik Studio, using real components and theme tokens. Reviews remain read-only unless fixes are requested.
+
+The existing Mosaik design instructions, versioned canvas guidance and checker are centralized here. Selected [UI Craft](https://github.com/educlopez/ui-craft) workflows are adapted to Mosaik, with [source revision, translations and MIT attribution](skills/mosaik-design/references/ui-craft.md). UI Craft does not need to be installed.
+
+To make it discoverable for Mosaik UI work across projects, install it globally:
+
+```sh
+npx skills add pixel-brewery/skills --skill mosaik-design --agent claude-code codex --global --yes
+```
+
+For reproducible repository use, replace `COMMIT` with a reviewed full Git SHA and install through the CLI:
+
+```sh
+npx skills add https://github.com/pixel-brewery/skills/tree/COMMIT/skills/mosaik-design --skill mosaik-design --agent codex claude-code --copy --yes
+```
+
+Commit the installed canonical `.agents/skills/mosaik-design` with the CLI-generated `skills-lock.json` and verify the client projections.
+
+Automatic invocation is enabled in the Codex metadata. The description selects UI work; the skill then routes by the requested outcome and repository evidence, like the architecture skill's domain routing. Agent clients decide whether to invoke a discoverable skill. A consuming repository that requires it for every applicable task should also route to `.agents/skills/mosaik-design/SKILL.md` from its own `AGENTS.md` or derived architect. Client mirrors must use that installed source.
+
+Inspect context without changing the project:
+
+```sh
+python3 skills/mosaik-design/scripts/discover_design.py path/to/app --json
+```
+
+The helper locates evidence; it does not execute theme modules, change dependencies or migrate unrelated design systems. For a migration from repository-owned design skills, install the reviewed central commit first, verify the canonical skill and client projections, then remove the superseded local copy and update callers together. Never invent a lock entry or delete the working local skill before the pinned import exists.
+
+Run the bundled checker on the changed canvases (or add `--app` for framework templates):
+
+```sh
+python3 skills/mosaik-design/scripts/check_design.py path/to/boards
+```
+
+The preserved Claude Code `--hook` adapter can additionally report canvas findings after writes when explicitly configured in the consuming project's settings. [Client integration](skills/mosaik-design/references/clients.md) contains the mergeable configuration. Automatic discovery does not install hooks or change user settings; the shared skill metadata stays portable.
+
 ## Validation
 
 ```sh
