@@ -41,7 +41,7 @@ To update, choose a reviewed central commit, repeat the pinned `skills add`, reg
 
 [`skills/designer`](skills/designer/SKILL.md) is the Mosaik designer for composition, redesign, usability/accessibility review, responsive behavior, states and visual polish. It detects the target application, framework, output surface and existing foundations before choosing guidance, even when the user does not name Mosaik. It covers Claude Design canvases, Angular, React, Vue, Svelte, Lit/HTML and Mosaik Studio, using real components and theme tokens. Reviews remain read-only unless fixes are requested.
 
-The existing Mosaik design instructions, versioned canvas guidance and checker are centralized here. Selected [UI Craft](https://github.com/educlopez/ui-craft) workflows are adapted to Mosaik, with [source revision, translations and MIT attribution](skills/designer/references/ui-craft.md). UI Craft does not need to be installed.
+The Mosaik design instructions, versioned canvas guidance, component-based composition workflow and checker are maintained together here.
 
 To make it discoverable for Mosaik UI work across projects, install it globally:
 

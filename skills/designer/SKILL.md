@@ -23,13 +23,13 @@ Omit the target to inspect the current directory. Use [discovery](references/dis
 
 | Requested outcome | Load after discovery |
 | --- | --- |
-| New screen, prototype, dashboard, landing page or form | [Craft](references/craft.md), [interaction](references/interaction.md), and the surface guide below |
-| Redesign, simplify, stronger or quieter presentation | [Craft](references/craft.md), preserving the existing content, navigation and workflows |
+| New screen, prototype, dashboard, landing page or form | [Composition](references/composition.md), [interaction](references/interaction.md), and the surface guide below |
+| Redesign, simplify, stronger or quieter presentation | [Composition](references/composition.md), preserving the existing content, navigation and workflows |
 | Usability, accessibility or design review | [Review](references/review.md); read-only unless fixes were requested |
 | Mobile/tablet adaptation, states, forms or motion | [Interaction](references/interaction.md) and the relevant surface guide |
-| Typography, colors, theme or visual polish | [Foundations](references/foundations.md), [craft](references/craft.md), then the affected review checks |
+| Typography, colors, theme or visual polish | [Foundations](references/foundations.md), [composition](references/composition.md), then the affected review checks |
 
-Combine rows when the request spans them. Do not add a new framework, animation library or a second design system to satisfy a style reference. Design engineering techniques adapted from UI Craft are documented with [provenance and translation decisions](references/ui-craft.md).
+Combine rows when the request spans them. Do not add a new framework, animation library or a second design system to satisfy a style reference.
 
 ## The three rules
 

@@ -6,7 +6,7 @@ Walk this with the actual screen open; use the checker as supporting evidence. I
 
 Discover the target, foundations and primary user task first. Review the requested dimension: usability, accessibility, responsive behavior or visual finish. For a broader review, assess task completion and orientation before visual details. Use [interaction](interaction.md) for keyboard, forms, states, widths and motion. Avoid expanding a narrow review into a product redesign.
 
-Prioritize a blocked task, inaccessible control or lost work first; then friction or misleading feedback; then visual refinement. Each finding identifies the screen/control, reproduction or visible evidence, user impact and a concrete correction. Separate verified behavior from an untested concern. Give scores only when the user requests a rubric, and explain what was observed rather than presenting a subjective score as deterministic.
+Follow the main task and report the defects that affect it. Each finding names the screen and control, the observed behavior, its effect on the user and a useful correction. Keep source-based concerns distinct from behavior verified in the browser. Address blocked actions and inaccessible paths before adjusting visual details.
 
 ## Foundations
 

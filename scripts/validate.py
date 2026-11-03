@@ -25,7 +25,7 @@ for skill in sorted((ROOT / 'skills').iterdir()):
                 errors.append(f'Skill resources must be regular files: {file}')
             if file.suffix == '.py':
                 compile(file.read_text(encoding='utf-8'), str(file), 'exec')
-            if file.is_file() and '[TODO:' in file.read_text(encoding='utf-8'):
+            if file.is_file() and b'[TODO:' in file.read_bytes():
                 errors.append(f'Unfinished skill scaffold: {file}')
     except (OSError, ValueError, SyntaxError) as error:
         errors.append(str(error))

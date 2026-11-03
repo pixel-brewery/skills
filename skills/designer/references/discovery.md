@@ -28,4 +28,4 @@ Read the user's constraints, existing design documentation, runtime theme setup,
 
 For an existing Mosaik app, retain the actual theme and overrides. For a new Mosaik interface, choose missing foundations using the entrypoint's precedence. For an unrelated existing UI, do not install Mosaik or replace its design system merely because this skill is available. For a backend-only task, return to the appropriate engineering guidance.
 
-Determine the user's intent separately from the output surface: a React file can need a read-only review, and a Studio tree can need responsive work. Do not ask the user to choose a command or tune numeric style knobs. State material assumptions in one short sentence and continue with the authorized work.
+Determine the user's intent separately from the output surface: a React file can need a read-only review, and a Studio tree can need responsive work. Choose the applicable guidance from the request and the inspected project. State material assumptions in one short sentence and continue with the authorized work.

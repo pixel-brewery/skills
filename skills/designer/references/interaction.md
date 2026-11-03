@@ -1,42 +1,29 @@
-# Interaction, states and adaptation
+# Using a Mosaik screen
 
-Read for forms, responsive layout, accessibility, state coverage or motion. Work through the actual components in the selected surface; a static screenshot does not prove interaction.
+Verify the assembled screen through its real controls. Read their documentation for the selected framework and installed version; a component's presence alone does not verify the surrounding application behavior.
 
-## Main task and state coverage
+## Follow an action
 
-Trace the user's path from entry to completion. Every visible action must have meaningful behavior or an explained disabled state. Keep selection visible without hovering, retain input after validation failures and give the user an understandable recovery path.
+Start at the screen's normal entry point and complete its main task. Check the selected navigation entry, current item and available next action. When an edit is possible, verify how unsaved values, saving and reverting are represented.
 
-For each asynchronous or editable region, identify states that can actually occur:
+For a control that starts asynchronous work, inspect its pending, completed and failed outcomes. Use the documented busy state to make pending work clear and prevent unintended repeated submissions. Empty collections and empty search results should explain their different next steps. Choose `BusyState`, `EmptyState`, `ErrorState` or `SuccessState` where those components fit the region.
 
-| State | Expected experience |
-| --- | --- |
-| Loading | Explain what is pending with the documented busy/loading component or state; prevent unintended duplicate submission |
-| Empty | Distinguish no data from no search matches or missing access; offer the appropriate next action |
-| Error | Explain the failed task, preserve recoverable work and expose retry or another real way forward |
-| Success | Make the completed change visible; retain context rather than relying only on a disappearing notification |
-| Unsaved or invalid | Show what needs attention, associate errors with fields and provide the actual save/revert behavior |
-| Partial, stale, conflict or offline | Include only if supported by the real flow; explain what remains valid and the available recovery |
+Keep useful input available after an error and make the actual recovery action visible. Exercise partial results, revision conflicts or connection loss when the product supports those situations. Do not invent a recovery mechanism that the application's data layer does not provide.
 
-Use documented Mosaik components and props, including `BusyState`, `EmptyState`, `ErrorState` and `SuccessState` when suitable. Do not implement offline queues, optimistic writes or conflict resolution solely to complete this checklist. In a prototype, distinguish demonstrated states from real backend behavior.
+## Operate without a pointer
 
-## Keyboard and accessibility
+Follow the task with Tab and Shift+Tab, then the documented keys for the focused component. Inspect the visible focus indication, field labels and names of icon actions. Selected and invalid states must be understandable without relying on color or hover alone.
 
-Use meaningful headings and landmarks, persistent field labels, accessible names for icon actions and explicit selected/expanded/error feedback. Check the actual rendered control rather than assuming a wrapper or theme makes the complete flow accessible. Keep error messages understandable without color alone.
+Open and dismiss the overlays used by the flow. Check where focus enters and where it returns. Include slotted controls and portalled content in this check: a working field on the page does not establish that its dialog version works too. Inspect the actual rendered control and the project's accessibility target before reporting an accessibility result.
 
-Exercise the main task with Tab, Shift+Tab and the component's documented activation/navigation keys. Check visible focus, focus order, overlay opening and dismissal, focus return and absence of keyboard traps. Test custom content, slotted actions and portals as part of the flow. Follow the project's accessibility target and report observed contrast or component defects rather than asserting compliance from a checker pass.
+## Fit the supported layouts
 
-## Responsive behavior
+Use the application's existing breakpoints and the widths it promises to support. At narrow, intermediate and wide layouts, check the primary task, navigation, long labels, translated content, tables and open overlays. Constrain necessary table scrolling to its own region. Keep actions reachable with touch as well as keyboard.
 
-Start from the content priorities and existing breakpoints. Keep the primary task usable at the narrowest supported width, a useful intermediate width and desktop. Check wrapping, long translations and values, zoom, overlay placement and touch operation. Do not simply shrink the desktop canvas.
+Use theme tokens for layout values and let content wrap or resize within its container. On a fixed Claude Design board, demonstrate another layout on an appropriate board rather than treating a scaled screenshot as a responsive implementation. In Studio, use the current authoring rules for breakpoint frames.
 
-Allow flex/grid children to shrink where appropriate, move supporting panels when space runs out and preserve action discoverability when navigation collapses. If a dense table needs horizontal scrolling, contain it in the table region rather than making the whole page scroll. Preserve meaningful columns or use a documented compact pattern. Hover-only information and tiny icon targets need a keyboard/touch equivalent.
+## Check visual feedback
 
-On a fixed-size canvas, demonstrate the claimed layouts with separate boards or supported frames; do not claim a responsive implementation from one scaled image. In Studio, preserve a page's design and use its supported breakpoint frames according to the current authoring rules.
+Inspect hover, focus, selection, disabled and pending feedback in the supported color modes. Use existing component behavior and the project's animation facilities for transitions. Honor reduced-motion preferences and keep the task usable when animation is reduced.
 
-## Motion
-
-Use motion to explain feedback, state changes or spatial relationships, within the current Mosaik components and project stack. Honor reduced-motion preferences and keep content and actions available without animation. Avoid perpetual movement around the main task and layout shifts that move an action while the user operates it. A request for a more expressive interface does not require another animation library.
-
-## Evidence
-
-Record the surface, widths/modes and meaningful states actually exercised, keyboard actions and remaining limits. Run static checks as supporting evidence; they cannot verify screen-reader output, contrast, touch behavior or a successful end-to-end task by themselves.
+Record the route or board, modes, sizes, actions and states actually inspected. The static checker does not establish a successful task, screen-reader behavior or contrast on the rendered screen. Report those limits when the corresponding check was unavailable.
