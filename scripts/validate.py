@@ -7,7 +7,7 @@ import runpy
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-helper = runpy.run_path(str(ROOT / 'skills/architecture/scripts/check_inheritance.py'))
+helper = runpy.run_path(str(ROOT / 'skills/architect/scripts/check_inheritance.py'))
 errors = []
 for skill in sorted((ROOT / 'skills').iterdir()):
     if not skill.is_dir():
@@ -25,7 +25,7 @@ for skill in sorted((ROOT / 'skills').iterdir()):
                 errors.append(f'Skill resources must be regular files: {file}')
             if file.suffix == '.py':
                 compile(file.read_text(encoding='utf-8'), str(file), 'exec')
-            if file.is_file() and '[TODO:' in file.read_text(encoding='utf-8'):
+            if file.is_file() and b'[TODO:' in file.read_bytes():
                 errors.append(f'Unfinished skill scaffold: {file}')
     except (OSError, ValueError, SyntaxError) as error:
         errors.append(str(error))

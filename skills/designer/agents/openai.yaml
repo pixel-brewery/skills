@@ -1,0 +1,6 @@
+interface:
+  display_name: "Mosaik Designer"
+  short_description: "Detect, design and review interfaces with Mosaik"
+  default_prompt: "Use $designer to detect this project's framework and foundations, then design or review the requested interface with real Mosaik components."
+policy:
+  allow_implicit_invocation: true

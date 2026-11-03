@@ -1,5 +1,5 @@
 ---
-name: architecture
+name: architect
 description: Shared engineering foundations for repository structure, architecture, implementation, refactoring, contracts, lifecycle and testing. Apply with a repository's derived architecture skill and local rules; select only the relevant domain modules.
 ---
 
@@ -35,14 +35,14 @@ For repository setup or structural work, read [Repository structure](references/
 
 ## Versioned derivation
 
-Install this skill through the Skills CLI into `.agents/skills/architecture` and commit the generated root `skills-lock.json`. Pin `ref` to a full Git commit; its `computedHash` protects the installed files. This uses the standard Skills lock format, not an automatic inheritance feature of an agent client.
+Install this skill through the Skills CLI into `.agents/skills/architect` and commit the generated root `skills-lock.json`. Pin `ref` to a full Git commit; its `computedHash` protects the installed files. This uses the standard Skills lock format, not an automatic inheritance feature of an agent client.
 
-The local skill declares `metadata.inherits: architecture`, links to this `SKILL.md`, explicitly loads it, and combines selected base modules with its own project rules. The metadata documents the dependency; the explicit instructions perform composition. Retain the same canonical tree when generating client mirrors, and include the base when exporting a portable derived skill.
+The local skill declares `metadata.inherits: architect`, links to this `SKILL.md`, explicitly loads it, and combines selected base modules with its own project rules. The metadata documents the dependency; the explicit instructions perform composition. Retain the same canonical tree when generating client mirrors, and include the base when exporting a portable derived skill.
 
 Run the installed validator from the consuming repository:
 
 ```sh
-python3 .agents/skills/architecture/scripts/check_inheritance.py --root . --derived project-architect
+python3 .agents/skills/architect/scripts/check_inheritance.py --root . --derived project-architect
 ```
 
 It checks the immutable Git ref, Skills CLI content hash, explicit base dependency and local reference availability. Missing, changed or unpinned bases must be repaired before relying on the inherited guidance. Update the central source, deliberately install a reviewed commit through the Skills CLI, regenerate local client projections and rerun the check. Do not edit the installed base or copy peer repositories' common files over it.
