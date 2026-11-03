@@ -1,5 +1,5 @@
 ---
-name: mosaik-design
+name: designer
 description: Design, build, redesign and review Mosaik interfaces, including screens, dashboards, forms, prototypes, themes, accessibility, responsive layout and visual polish. Apply automatically to UI work when the project uses @pixel-brewery/mosaik-* packages, Mosaik canvases or Studio trees, even when the user does not name the skill. Detect the target app, framework, surface and existing foundations before selecting guidance. Also use for new interfaces when Mosaik is selected; do not migrate unrelated design systems or activate for backend-only work.
 ---
 
@@ -16,7 +16,7 @@ The user does not need a slash command, framework name or theme questionnaire. I
 Run the bundled read-only discovery helper from the consuming repository, replacing the skill path with its actual installation location:
 
 ```sh
-python3 .agents/skills/mosaik-design/scripts/discover_design.py path/to/view --json
+python3 .agents/skills/designer/scripts/discover_design.py path/to/view --json
 ```
 
 Omit the target to inspect the current directory. Use [discovery](references/discovery.md) to interpret its evidence and resolve ambiguity. Read the nearest owning application and its imports before relying on workspace-wide dependencies; a monorepo may contain every framework. Inspect the reported foundation sources; the helper locates them, it does not evaluate theme modules or decide values. Preserve generated design documents and resolve their generator/configuration owner.

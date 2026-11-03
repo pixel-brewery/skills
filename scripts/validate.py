@@ -7,7 +7,7 @@ import runpy
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-helper = runpy.run_path(str(ROOT / 'skills/architecture/scripts/check_inheritance.py'))
+helper = runpy.run_path(str(ROOT / 'skills/architect/scripts/check_inheritance.py'))
 errors = []
 for skill in sorted((ROOT / 'skills').iterdir()):
     if not skill.is_dir():

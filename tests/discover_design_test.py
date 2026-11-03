@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'skills/mosaik-design/scripts/discover_design.py'
+SCRIPT = Path(__file__).resolve().parents[1] / 'skills/designer/scripts/discover_design.py'
 
 
 class DiscoverDesignTests(unittest.TestCase):

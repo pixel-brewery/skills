@@ -291,7 +291,7 @@ def run_hook(stream) -> int:
         return 0
     for finding in result.findings:
         print(finding.render(), file=sys.stderr)
-    print('mosaik-design: fix these before continuing. Every control is a Mosaik component.', file=sys.stderr)
+    print('designer: fix these before continuing. Every control is a Mosaik component.', file=sys.stderr)
     return 2
 
 

@@ -17,7 +17,7 @@ The extracted checker preserves its `--hook` adapter. If hook integration is req
         "hooks": [
           {
             "type": "command",
-            "command": "for d in \"$CLAUDE_PROJECT_DIR/.agents/skills\" \"$CLAUDE_PROJECT_DIR/.claude/skills\" \"$HOME/.agents/skills\" \"$HOME/.claude/skills\"; do if [ -f \"$d/mosaik-design/scripts/check_design.py\" ]; then exec python3 \"$d/mosaik-design/scripts/check_design.py\" --hook; fi; done"
+            "command": "for d in \"$CLAUDE_PROJECT_DIR/.agents/skills\" \"$CLAUDE_PROJECT_DIR/.claude/skills\" \"$HOME/.agents/skills\" \"$HOME/.claude/skills\"; do if [ -f \"$d/designer/scripts/check_design.py\" ]; then exec python3 \"$d/designer/scripts/check_design.py\" --hook; fi; done"
           }
         ]
       }

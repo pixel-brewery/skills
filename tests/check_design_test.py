@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'skills/mosaik-design/scripts/check_design.py'
+SCRIPT = Path(__file__).resolve().parents[1] / 'skills/designer/scripts/check_design.py'
 HELPER = runpy.run_path(str(SCRIPT))
 
 PROVIDER = 'component-from-global-scope="Mosaik.MosaikThemeProvider"'

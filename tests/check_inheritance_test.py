@@ -7,7 +7,7 @@ import shutil
 import tempfile
 import unittest
 
-SOURCE = Path(__file__).resolve().parents[1] / 'skills/architecture'
+SOURCE = Path(__file__).resolve().parents[1] / 'skills/architect'
 HELPER = runpy.run_path(str(SOURCE / 'scripts/check_inheritance.py'))
 
 
@@ -16,18 +16,18 @@ class InheritanceTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.base = self.root / '.agents/skills/architecture'
+        self.base = self.root / '.agents/skills/architect'
         shutil.copytree(SOURCE, self.base)
         self.local = self.root / '.agents/skills/project-architect'
         self.local.mkdir()
         (self.local / 'SKILL.md').write_text(
             '---\nname: project-architect\ndescription: Project-specific architecture.\n'
-            'metadata:\n  inherits: architecture\n---\n\n'
-            'Read [Architecture](../architecture/SKILL.md), then apply local rules.\n'
+            'metadata:\n  inherits: architect\n---\n\n'
+            'Read [Architecture](../architect/SKILL.md), then apply local rules.\n'
         )
-        self.lock = {'version': 1, 'skills': {'architecture': {
+        self.lock = {'version': 1, 'skills': {'architect': {
             'source': 'pixel-brewery/skills', 'sourceType': 'github',
-            'skillPath': 'skills/architecture/SKILL.md', 'ref': 'a' * 40,
+            'skillPath': 'skills/architect/SKILL.md', 'ref': 'a' * 40,
             'computedHash': HELPER['folder_hash'](self.base), 'installMode': 'copy'
         }}}
         self.write_lock()
@@ -46,23 +46,23 @@ class InheritanceTests(unittest.TestCase):
         self.assertTrue(any('content differs' in message for message in self.check()))
 
     def test_rejects_mutable_git_ref(self):
-        self.lock['skills']['architecture']['ref'] = 'main'
+        self.lock['skills']['architect']['ref'] = 'main'
         self.write_lock()
         self.assertTrue(any('40-character' in message for message in self.check()))
 
     def test_rejects_implicit_or_missing_derivation(self):
         path = self.local / 'SKILL.md'
-        path.write_text(path.read_text().replace('  inherits: architecture\n', ''))
+        path.write_text(path.read_text().replace('  inherits: architect\n', ''))
         self.assertTrue(any('metadata.inherits' in message for message in self.check()))
 
     def test_rejects_missing_base_link(self):
         path = self.local / 'SKILL.md'
-        path.write_text(path.read_text().replace('[Architecture](../architecture/SKILL.md)', 'Architecture'))
+        path.write_text(path.read_text().replace('[Architecture](../architect/SKILL.md)', 'Architecture'))
         self.assertTrue(any('explicitly link' in message for message in self.check()))
 
     def test_rejects_broken_inherited_reference(self):
         (self.local / 'references').mkdir()
-        (self.local / 'references/project.md').write_text('[Missing](../../architecture/references/common/missing.md)\n')
+        (self.local / 'references/project.md').write_text('[Missing](../../architect/references/common/missing.md)\n')
         self.assertTrue(any('Broken relative reference' in message for message in self.check()))
 
     def test_rejects_legacy_list_lock_without_overwriting_it(self):
