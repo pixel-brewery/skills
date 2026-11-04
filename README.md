@@ -75,6 +75,33 @@ python3 skills/designer/scripts/check_design.py path/to/boards
 
 The preserved Claude Code `--hook` adapter can additionally report canvas findings after writes when explicitly configured in the consuming project's settings. [Client integration](skills/designer/references/clients.md) contains the mergeable configuration. Automatic discovery does not install hooks or change user settings; the shared skill metadata stays portable.
 
+## Technical writing
+
+[`skills/technical-writer`](skills/technical-writer/SKILL.md) combines product
+handbooks, portable technical implementation contracts and a consolidated
+customer-facing feature catalog in one role. It supports impact checks, builds,
+synchronization, audits and documentation migrations, selecting only the audience
+guides needed for the task. Technical pages must explain behavior independently
+of source paths; catalog entries cover complete implemented customer outcomes
+ordered by value.
+
+For reproducible repository use, replace `COMMIT` with a reviewed full Git SHA:
+
+```sh
+npx skills add https://github.com/pixel-brewery/skills/tree/COMMIT/skills/technical-writer --skill technical-writer --agent codex claude-code --copy --yes
+```
+
+Commit the imported `.agents/skills/technical-writer`, the CLI-generated
+`skills-lock.json` and the repository's generated client projections. A local
+derived role explicitly reads this base and its own documentation contract;
+paths, languages, status labels, commercial vocabulary and validation commands
+stay in the consuming project. Metadata alone does not load the base.
+
+[Project integration](skills/technical-writer/references/project-integration.md)
+describes composition and an authorized migration from separate documentation
+skills. Retain local validators and translation/tour owners. Consumer adoption
+follows review of the shared foundation and does not occur as part of adding it.
+
 ## Validation
 
 ```sh

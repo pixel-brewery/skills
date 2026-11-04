@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Writer"
+  short_description: "Product handbooks, technical contracts and feature catalogs"
+  default_prompt: "Use $technical-writer to build, audit or synchronize the requested documentation from verified implementation and the project documentation contract."
