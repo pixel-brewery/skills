@@ -8,3 +8,23 @@
 - Consumers install through the Skills CLI and pin a full commit in standard `skills-lock.json`. Do not hand-edit a consumer's imported base or replace its local rules.
 - Do not create pull requests without first running an available local Ship-it review and resolving its blocking findings.
 - Keep private consumer project identities out of this public foundation. Run `node scripts/verify-public-content.mjs` and its adjacent Node test suite after changing public source or archives; CI includes both checks.
+
+## Git delivery and completion
+
+- Implementation and fix requests include task-scoped commits, pushes and any PR required
+  by branch protection, through the requested merge, unless the owner requests analysis,
+  a draft or local-only work. Use the designated checkout and `codex/` work branches;
+  do not create extra clones or worktrees without a specific request.
+- Assign one owner for staging, commits and refs. Parallel agents may edit disjoint files
+  under that owner's coordination. Inspect and preserve existing unrelated work before
+  staging; never silently include another task's changes.
+- Inspect current protection and workflow effects. Run an available local Ship-it review
+  before creating a PR, resolve blockers and verify checks at its current head. Never
+  bypass checks or weaken protection. A requested merge requires GitHub's `MERGED` state
+  and the result on the destination branch; enabling auto-merge is not completion.
+- Finish with no staged, unstaged or non-ignored untracked changes, and safely synchronize
+  retained local branches with their own upstreams. Remove temporary branches or worktrees
+  only after proving integration and preserving unique commits and necessary local data.
+  Keep permanent integration branches and the designated checkout; never discard work.
+- Report unfinished delivery and its concrete blocker. This policy does not authorize
+  releases, publication, deployment, visibility changes or protected-history rewrites.
