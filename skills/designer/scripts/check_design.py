@@ -11,6 +11,8 @@ from pathlib import Path
 import re
 import sys
 
+# A CLI-pinned skill is immutable, including when Python's cache lives beside sources.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_application import (  # noqa: E402 - also supports runpy-based clients
     APP_SUFFIXES, CONTROL_ROLES as APP_CONTROL_ROLES,
