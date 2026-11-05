@@ -24,7 +24,13 @@ A newly configured server is available only after the client reconnects. The Bet
 4. `get_framework_guide`, `get_starter_template` or `get_inline_boilerplate` when writing code.
 5. `get_token_schema`, `create_theme`, `get_theme_examples` and `validate_theme` when a theme is involved.
 
-Keep the IDs you used and name them in your report. A template you looked at and rejected is worth naming too.
+Keep the IDs you used and name them in your report. A template you looked at and rejected is worth naming too. Compare the returned API with the installed package version before using a component or property. The deployed snapshot does not choose a new product theme or authorize a package upgrade.
+
+For new ideas or composition decisions, use those contracts to compose real components instead of inventing an API or reproducing a visual reference with CSS. If the catalog fails, retry once and report the exact failure. Only maintenance already established by documented installed sources can continue offline when local rules permit it; new design decisions remain pending. [Project integration](project-integration.md) defines the stricter mandatory consumer contract, which pauses every dependent design decision on failure.
+
+## Conflicting catalog evidence
+
+The catalog is evidence, not permission to violate [the component boundary](compliance.md) or the installed API. Check option schemas and component/API documentation before copying an example; do not copy deprecated Stack, handmade surfaces/badges or undocumented prop/event meanings. Report a conflicting or stale example and resolve it from verified catalog evidence and the installed contract. If a material conflict remains unresolved, pause that design decision and continue independent work. The mandatory live consultation still applies; remembered APIs or an invented replacement do not resolve the conflict.
 
 ## Studio and IElement trees
 
@@ -40,4 +46,4 @@ Validate the composed tree with `validate_design_tree`, then export with `render
 
 ## Using the catalog on other surfaces
 
-A Claude Design canvas or framework code is not an `IElement` tree, so `validate_design_tree` does not apply there. Use the templates and recipes as the composition to follow, and say in your report that the tree validation was not run and why. The checker in this skill takes its place on a canvas.
+A Claude Design canvas or framework code is not an `IElement` tree, so `validate_design_tree` does not apply there. Use the templates and recipes as the composition to follow, and say in your report that the tree validation was not run and why. Run the surface's source checker plus [the compliance evidence pass](compliance.md) and browser checks; these do not become equivalent to a complete tree-schema validation.

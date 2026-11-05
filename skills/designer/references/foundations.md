@@ -6,7 +6,7 @@ How to set theme, color, type and shape, and how to record them. Read this befor
 
 Mosaik is one token vocabulary with several value sets. Only the names are fixed. A product picks a base theme and overrides values, and every component follows because components read tokens, never literals. A product adds neither tokens nor component anatomy.
 
-Consumers use the `--mosaik-*` custom properties. Never address a theme by its own prefix such as `--joy-*`, because that breaks when the theme changes.
+Consumers use the `--mosaik-*` custom properties. Never address a theme by its own prefix such as `--joy-*`, because that breaks when the theme changes. Tokens govern real components; they do not authorize rebuilding a Card, Badge or another semantic UI role in plain markup. Apply [the component and layout boundary](compliance.md).
 
 Each theme also carries its own component anatomy, not only its values. A Soho `Textbox` has its label above the field, a Joy `Textbox` floats it inside. Memphis and Cosmopolitan uppercase some labels. Changing the base theme therefore changes more than colors, so choose it first and check the result on screen.
 
@@ -61,7 +61,7 @@ Tested on a canvas with a Soho base: `fontFamily`, `layout.radius`, `layout.thic
 - Setting `fontFamily` alone does not reach everything. In the test above, button labels and some control labels stayed in the base font, because each typography role carries its own font family. To change the font completely, also set the family on the `typography` roles, then check buttons and labels on screen.
 - Nothing in a theme ships a `@font-face`, so always load the font. On a canvas, Google Fonts is the only allowed host.
 - Theme fonts to load: Soho `Inter`, Joy `Nunito`, Memphis `Space Grotesk`, Cosmopolitan `Noto Sans` (`Segoe UI` where installed).
-- In your own markup use `font: var(--mosaik-typography-body2)` and the other role shorthands. They follow the theme.
+- In semantic headings/body text use the exact `font: var(--mosaik-typography-body2)` or other role shorthand. It follows the theme. Do not restyle the role locally with separate font-family, weight, tracking or line-height choices; a requested typography change belongs to the maintained theme source.
 
 ### Shape and spacing
 
@@ -73,13 +73,14 @@ Tested on a canvas with a Soho base: `fontFamily`, `layout.radius`, `layout.thic
 
 Component sizes are the names `tiny`, `small`, `medium`, `large` and `giant`, never numbers. A layout `gap` uses the same names (2, 4, 8, 16, 32px) or a length built from `--mosaik-layout-space`.
 
-### Tokens for your own markup
+### Tokens at the consumption boundary
 
-- `var(--mosaik-scheme-background)` for the page, `surface` for panels, `foreground` for text, `lowlight` for secondary text, `highlight` for 1px borders
-- `var(--mosaik-color-<family>-<step>)`, for example `--mosaik-color-neutral-100`
-- `var(--mosaik-layout-space)`, `var(--mosaik-layout-radius)`, `var(--mosaik-layout-thickness)`
-- `var(--mosaik-typography-<role>)` as a `font` shorthand
-- `var(--mosaik-elevation-<level>)` as a `box-shadow`. Prefer borders and spacing before depth.
+- The document baseline uses `var(--mosaik-scheme-background)` and `var(--mosaik-scheme-foreground)`. Semantic text can use the documented foreground/secondary-text token with its exact typography role.
+- Layout uses `var(--mosaik-layout-space)` and the matching Tailwind preset. A theme's radius, thickness and elevation values belong to its real component appearance; do not copy them onto a plain panel.
+- Semantic headings/body text use `var(--mosaik-typography-<role>)` as the exact `font` shorthand.
+- Colors passed to documented Mosaik data props, such as a palette value in a ColorSwatch specimen, remain domain data. Scope them to that preview; they do not recolor app chrome or status states.
+
+Use the actual Card, Divider, Badge and state components for surfaces, separators and feedback. Even a perfectly tokenized CSS reconstruction violates the component boundary. Requested theme changes flow through the maintained theme source and its generator/browser checks.
 
 ## A completely new theme
 
@@ -98,11 +99,14 @@ In a repository, `DESIGN.md` is the record and `tools/design-md.config.json` dri
 }
 ```
 
+Use the project's existing generator scripts and installed version. When the installed package exposes the binary directly, the equivalent commands are:
+
 ```bash
-yarn add -D @pixel-brewery/mosaik-themes@latest @google/design.md
-npx mosaik-design-md generate   # writes DESIGN.md and COMPONENTS.md
-npx mosaik-design-md check      # for verify and CI
+yarn exec mosaik-design-md generate --config tools/design-md.config.json
+yarn exec mosaik-design-md check --config tools/design-md.config.json
 ```
+
+Do not install `@latest`, add a second theme dependency or change the lockfile merely to generate documentation. If the generator is absent, report that tooling gap and preserve the existing authored record; dependency changes require their own task scope.
 
 The generator seeds the prose from the base theme and later rewrites only the generated regions. Add a short "Foundations" section with the decision list from Step 1, because the reasons are what a later session needs.
 

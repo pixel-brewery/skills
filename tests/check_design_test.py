@@ -47,7 +47,7 @@ class CheckDesignTests(unittest.TestCase):
         self.assertEqual(self.rules(BUTTON), {})
 
     def test_native_controls_are_rejected(self):
-        for tag in ('button', 'input', 'select', 'textarea', 'table', 'dialog', 'progress'):
+        for tag in ('button', 'input', 'select', 'textarea', 'table', 'dialog', 'progress', 'img', 'hr', 'summary'):
             with self.subTest(tag=tag):
                 self.assertEqual(self.rules(f'<{tag}></{tag}>').get('native-control'), 'error')
 
@@ -102,12 +102,19 @@ class CheckDesignTests(unittest.TestCase):
         self.assertEqual(self.rules('<a href="X.dc.html">All runs</a>').get('plain-link'), 'warning')
         self.assertEqual(self.rules('<a href="X.dc.html"><mosaik-menu-item label="Runs"></mosaik-menu-item></a>'), {})
 
-    def test_exceptions_need_a_reason_and_are_listed(self):
-        result = HELPER['check']([self.write(board('<canvas></canvas><button data-mosaik-exception="native drag handle"></button>'))])
+    def test_legacy_exceptions_cannot_waive_controls(self):
+        result = HELPER['check']([self.write(board('<button data-mosaik-exception="native drag handle"></button>'))])
+        self.assertEqual({item.rule for item in result.findings}, {'legacy-exception', 'native-control'})
+        self.assertEqual(result.exceptions, [])
+        self.assertEqual(self.rules('<button data-mosaik-exception=""></button>').get('exception-reason'), 'error')
+
+    def test_only_scoped_static_illustrations_are_reported_as_exceptions(self):
+        result = HELPER['check']([self.write(board('<svg data-mosaik-illustration="static domain diagram"><path style="fill:#ff0000" d="M0 0" /></svg>'))])
         self.assertEqual(result.findings, [])
         self.assertEqual(len(result.exceptions), 1)
-        self.assertIn('native drag handle', result.exceptions[0])
-        self.assertEqual(self.rules('<button data-mosaik-exception=""></button>').get('exception-reason'), 'error')
+        self.assertIn('static domain diagram', result.exceptions[0])
+        self.assertIn('illustration-exception', self.rules('<div data-mosaik-illustration="screen"><button></button></div>'))
+        self.assertIn('native-control', self.rules('<svg data-mosaik-illustration="diagram"><foreignObject><button>Save</button></foreignObject></svg>'))
 
     def test_folders_are_searched_for_canvases_only_by_default(self):
         self.write(board(BUTTON))
@@ -116,10 +123,53 @@ class CheckDesignTests(unittest.TestCase):
 
     def test_app_mode_checks_framework_templates(self):
         self.write('<button></button>\n<mosaik-button></mosaik-button>\n<Input />\n', 'view.tsx')
-        self.write('<button mosaik-exception: drag handle></button>', 'allowed.html')
+        self.write('<main class="flex gap-2"><h1 style="font:var(--mosaik-typography-headline3)">Title</h1></main>', 'allowed.html')
         self.write('declare const x: 1;', 'types.d.ts')
         result = HELPER['check']([self.root], app=True)
-        self.assertEqual([(item.path.name, item.line) for item in result.findings], [('view.tsx', 1)])
+        self.assertEqual([(item.path.name, item.line, item.rule) for item in result.findings], [('view.tsx', 1, 'native-control'), ('view.tsx', 3, 'unverified-component')])
+        self.assertEqual(result.components, 1)
+
+    def test_canvas_component_names_are_verified_before_counting(self):
+        for body in ('<mosaik-does-not-exist></mosaik-does-not-exist>', '<x-import component-from-global-scope="Mosaik.DoesNotExist"></x-import>'):
+            with self.subTest(body=body):
+                result = HELPER['check']([self.write(board(body))])
+                self.assertGreater(result.errors, 0)
+                self.assertEqual(result.components, 0)
+
+    def test_canvas_token_painted_panels_and_visual_utilities_fail(self):
+        self.assertIn('hand-built-surface', self.rules('<div style="background:var(--mosaik-scheme-surface);border-radius:var(--mosaik-layout-radius)">Panel</div>'))
+        self.assertIn('non-layout-utility', self.rules('<span class="rounded-lg bg-red-500">Badge</span>'))
+        self.assertIn('literal-spacing', self.rules('<main style="padding:19px"></main>'))
+
+    def test_canvas_opaque_styles_and_token_built_typography_require_resolution(self):
+        self.assertIn('dynamic-style', self.rules('<div style="{{panelStyle}}">Panel</div>'))
+        self.assertIn('literal-typography', self.rules('<h1 style="font:600 calc(var(--mosaik-layout-space)*4)/1.1 var(--mosaik-font-family)">Title</h1>'))
+        self.assertEqual(self.rules('<h1 style="font:var(--mosaik-typography-headline3)">Title</h1>'), {})
+
+    def test_stylesheets_and_empty_or_unsupported_scopes_are_not_silent_successes(self):
+        self.write('.panel { border-radius:13px; background:var(--mosaik-scheme-surface); }', 'view.scss')
+        checked = self.run_script('--app', '--json', str(self.root))
+        self.assertEqual(checked.returncode, 1)
+        self.assertIn('hand-built-surface', checked.stdout)
+        empty = self.root / 'empty'
+        empty.mkdir()
+        result = self.run_script('--app', '--json', str(empty))
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(json.loads(result.stdout)['findings'][0]['rule'], 'empty-scope')
+        unsupported = self.write('Not a UI source', 'notes.txt')
+        self.assertEqual(self.run_script(str(unsupported)).returncode, 1)
+
+    def test_warnings_require_review_before_command_line_success(self):
+        path = self.write(board('<p style="font-family:Georgia">Text</p>'))
+        report = self.run_script('--json', str(path))
+        self.assertEqual(report.returncode, 1)
+        self.assertEqual(json.loads(report.stdout)['status'], 'review-required')
+
+    def test_overlapping_targets_are_inspected_once(self):
+        path = self.write(board(BUTTON))
+        result = HELPER['check']([self.root, path])
+        self.assertEqual(result.files, 1)
+        self.assertEqual(result.components, 1)
 
     def test_command_line_exit_codes(self):
         clean = self.write(board(BUTTON), 'Clean.dc.html')

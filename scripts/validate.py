@@ -9,6 +9,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 helper = runpy.run_path(str(ROOT / 'skills/architect/scripts/check_inheritance.py'))
 errors = []
+role_names = {'architect': 'Architekt', 'designer': 'Designer', 'technical-writer': 'Technical Writer'}
 for skill in sorted((ROOT / 'skills').iterdir()):
     if not skill.is_dir():
         continue
@@ -19,6 +20,11 @@ for skill in sorted((ROOT / 'skills').iterdir()):
             errors.append(f'{entry}: name must match its directory.')
         if not re.search(r'^description:\s*\S.+$', metadata, re.M):
             errors.append(f'{entry}: description is required.')
+        if skill.name in role_names:
+            interface = skill / 'agents/openai.yaml'
+            display = re.search(r'^\s+display_name:\s*[\'"]([^\'"\n]+)[\'"]\s*$', interface.read_text(encoding='utf-8'), re.M)
+            if not display or display.group(1) != role_names[skill.name]:
+                errors.append(f'{interface}: display_name must be exactly {role_names[skill.name]!r}.')
         errors.extend(helper['validate_links'](skill))
         for file in skill.rglob('*'):
             if file.is_symlink():

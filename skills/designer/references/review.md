@@ -16,8 +16,10 @@ Follow the main task and report the defects that affect it. Each finding names t
 
 ## Components
 
-- Does the checker's count match the impression on screen? Look for controls it cannot see, such as a styled `span` that acts as a badge.
-- Is any plain surface left that could be a real `Card`? If one has to stay, does it name the component the product should use?
+- Does each semantic role use its real Mosaik component, including Card, Badge, Message, lists and whole-area states? Look for token-painted surfaces and styled spans as well as native controls.
+- Have imports, aliases and local wrappers been traced to verified component composition, rather than accepted from their names or counts?
+- Were the complete owner templates and CSS/SCSS inspected, including dynamic/unsupported scope the checker could not establish? Apply [compliance](compliance.md); zero errors alone is insufficient evidence.
+- Are illustration declarations narrow noninteractive SVG/canvas data content, with no controls or app chrome waived by a marker or ancestor?
 - Is there one solid primary action per view, and is it the most likely next step?
 
 ## Orientation
@@ -57,4 +59,5 @@ Show each that can occur, using `EmptyState`, `ErrorState`, `SuccessState` and `
 - Does the page hold at the widths it claims to support, without horizontal page scroll?
 - Are fields of the same row aligned on one baseline?
 - Does the spacing follow `--mosaik-layout-space` rather than ad hoc values?
+- Are Tailwind and plain CSS limited to layout, with exact Mosaik typography bindings for semantic text? Visual utilities and component-internal overrides are not layout.
 - Do tall controls waste room where a compact one fits, such as a long radio list versus a `Select`?

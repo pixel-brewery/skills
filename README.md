@@ -2,7 +2,15 @@
 
 Reusable [Agent Skills](https://agentskills.io) maintained by Pixel Brewery. Each skill is a discoverable directory under `skills/` with a `SKILL.md` entrypoint and the references or scripts it needs.
 
-## Architecture
+| Role shown to the user | Stable skill ID |
+| --- | --- |
+| Architekt | `architect` |
+| Designer | `designer` |
+| Technical Writer | `technical-writer` |
+
+These shared role names have no product prefix. Repository-specific derived roles keep their own project-prefixed names and local contracts.
+
+## Architekt
 
 [`skills/architect`](skills/architect/SKILL.md) contains the shared engineering foundations. Repository-specific architect skills derive from it through explicit composition and retain their local rules, domain routing and framework adaptations.
 
@@ -27,7 +35,7 @@ metadata:
   inherits: architect
 ```
 
-In its body, explicitly read `[Architecture](../architect/SKILL.md)` first, then select shared modules and combine them with local references. Metadata alone does not load or merge skills. A local `references/project.md` remains the owner of project policy and deliberate adaptations.
+In its body, explicitly read `[Architekt](../architect/SKILL.md)` first, then select shared modules and combine them with local references. Metadata alone does not load or merge skills. A local `references/project.md` remains the owner of project policy and deliberate adaptations.
 
 ```sh
 python3 .agents/skills/architect/scripts/check_inheritance.py --root . --derived project-architect
@@ -37,9 +45,9 @@ The validator uses Python 3 and Node.js (the same locale-aware content-hash orde
 
 To update, choose a reviewed central commit, repeat the pinned `skills add`, regenerate client projections and rerun the check. A pinned install remains on that commit until deliberately updated. Keep changes to project policy in the derived skill; changes to shared foundations belong here.
 
-## Mosaik design
+## Designer
 
-[`skills/designer`](skills/designer/SKILL.md) is the Mosaik designer for composition, redesign, usability/accessibility review, responsive behavior, states and visual polish. It detects the target application, framework, output surface and existing foundations before choosing guidance, even when the user does not name Mosaik. It covers Claude Design canvases, Angular, React, Vue, Svelte, Lit/HTML and Mosaik Studio, using real components and theme tokens. Reviews remain read-only unless fixes are requested.
+[`skills/designer`](skills/designer/SKILL.md) composes and reviews Mosaik interfaces, including responsive behavior, states and visual polish. It detects the target application, framework, output surface and existing foundations before choosing guidance. It covers Claude Design canvases, Angular, React, Vue, Svelte, Lit/HTML and Mosaik Studio. Every available semantic UI role uses a real Mosaik component: cards, badges, feedback and states as well as interactive controls. Tailwind and plain CSS arrange layout; token-painted replacements and component skins do not qualify. Reviews remain read-only unless fixes are requested.
 
 The Mosaik design instructions, versioned canvas guidance, component-based composition workflow and checker are maintained together here.
 
@@ -57,7 +65,9 @@ npx skills add https://github.com/pixel-brewery/skills/tree/COMMIT/skills/design
 
 Commit the installed canonical `.agents/skills/designer` with the CLI-generated `skills-lock.json` and verify the client projections.
 
-Automatic invocation is enabled in the Codex metadata. The description selects UI work; the skill then routes by the requested outcome and repository evidence, like the architecture skill's domain routing. Agent clients decide whether to invoke a discoverable skill. A consuming repository that requires it for every applicable task should also route to `.agents/skills/designer/SKILL.md` from its own `AGENTS.md` or derived architect. Client mirrors must use that installed source.
+Automatic invocation is enabled in the Codex metadata. The description selects UI work; the skill then routes by the requested outcome and repository evidence, like the architecture skill's domain routing. Agent clients decide whether to invoke a discoverable skill. A consuming repository that requires it for every applicable task routes its own `AGENTS.md` and architect through a derived Designer as described below. Client mirrors must use the installed source.
+
+For a mandatory project Designer, use [project integration](skills/designer/references/project-integration.md): the local role explicitly loads the pinned Designer and that shared workflow, while owning its project's theme, installed version, runtime and generation commands. Route `AGENTS.md` and the local architect through the derived role. The same mandatory catalog procedure applies to new ideas and design decisions in every consumer; do not maintain independent copies of it.
 
 Inspect context without changing the project:
 
@@ -67,15 +77,18 @@ python3 skills/designer/scripts/discover_design.py path/to/app --json
 
 The helper locates evidence; it does not execute theme modules, change dependencies or migrate unrelated design systems. For a migration from repository-owned design skills, install the reviewed central commit first, verify the canonical skill and client projections, then remove the superseded local copy and update callers together. Never invent a lock entry or delete the working local skill before the pinned import exists.
 
-Run the bundled checker on the changed canvases (or add `--app` for framework templates):
+Run the bundled checker on changed canvases, or use `--app` for the complete application UI owner, including templates and authored styles:
 
 ```sh
 python3 skills/designer/scripts/check_design.py path/to/boards
+python3 skills/designer/scripts/check_design.py --app path/to/ui-owner
 ```
+
+The application check inspects supported markup, inline templates, CSS/SCSS and component/import evidence, and reports unsupported dynamic source or unresolved provenance. Explicitly include any remaining owning style sources. Exception comments do not skip checks; only narrowly declared noninteractive SVG/canvas illustrations can be reported as illustrations. The component snapshot is versioned, and zero errors or a component count alone does not establish exclusive Mosaik use, active theme/preset configuration or working interactions. Follow [the compliance evidence pass](skills/designer/references/compliance.md) and verify the actual view in a browser.
 
 The preserved Claude Code `--hook` adapter can additionally report canvas findings after writes when explicitly configured in the consuming project's settings. [Client integration](skills/designer/references/clients.md) contains the mergeable configuration. Automatic discovery does not install hooks or change user settings; the shared skill metadata stays portable.
 
-## Technical writing
+## Technical Writer
 
 [`skills/technical-writer`](skills/technical-writer/SKILL.md) combines product
 handbooks, portable technical implementation contracts and a consolidated
@@ -111,10 +124,13 @@ node scripts/verify-public-content.mjs
 node --test scripts/verify-public-content.spec.mjs
 ```
 
-The `Validate skills` GitHub Actions workflow runs both checks on pushes, pull
+The `Validate skills` GitHub Actions workflow runs these checks on pushes, pull
 requests, merge queues and manual dispatches with read-only repository permissions. Validation
 checks skill metadata, Python syntax and maintained relative references; the tests
-exercise accepted and rejected inheritance states. The aggregate `Quality Gate`
+exercise accepted and rejected inheritance states and design-checker behavior,
+including valid layout/component compositions and rejected UI replacements,
+styling and bypass attempts. These tests validate the tooling, not every future
+agent decision or rendered screen. The aggregate `Quality Gate`
 check succeeds only when the validation job succeeds, and fails if that job fails,
 is cancelled or is skipped. Required branch checks are configured separately in
 GitHub; add `Quality Gate` after the workflow revision is published and the check

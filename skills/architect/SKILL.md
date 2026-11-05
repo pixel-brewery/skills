@@ -3,7 +3,7 @@ name: architect
 description: Shared engineering foundations for repository structure, architecture, implementation, refactoring, contracts, lifecycle and testing. Apply with a repository's derived architecture skill and local rules; select only the relevant domain modules.
 ---
 
-# Architecture foundations
+# Architekt
 
 This is the shared base for repository-specific architecture skills. Read the derived skill's project contract and the applicable `AGENTS.md` together with this base. A derived skill retains its own name, domain routing, project references and explicit compatibility decisions.
 

@@ -1,6 +1,8 @@
 # Components
 
-Which Mosaik component answers which need, and the rules they share. Names are the React and canvas exports; the tag is `mosaik-` plus the kebab-case name (`ToggleSwitch`, `mosaik-toggle-switch`). Mosaik 0.1.185 has 383 components, so search before concluding that something is missing: `search_components`, `find_similar_components`, `get_component_docs`.
+Which Mosaik component answers which need, and the rules they share. Names are the React and canvas exports; the tag is `mosaik-` plus the kebab-case name (`ToggleSwitch`, `mosaik-toggle-switch`). Mosaik 0.1.185 has 383 components, so search before concluding that something is missing: `search_components`, `find_similar_components`, `get_component_docs`. These names route the search; verify the actual export, tag, props and slots against the installed package and live catalog before use.
+
+Every available semantic role in the table uses its real component, including noninteractive surfaces and status. A token-styled `div` Card, `span` Badge, plain message or hand-painted loading state fails the same rule as a native button. Trace framework aliases and local feature wrappers to their Mosaik composition. A count or prefix is not provenance; unknown components and unresolved wrappers remain findings. Follow [compliance](compliance.md) for the permitted plain-markup boundary.
 
 ## By need
 
@@ -46,7 +48,7 @@ These fail silently, which makes them easy to miss:
 
 1. **Text goes through attributes, not children.** `label` on Button, Checkbox, Radio, Chip, Badge, ToggleSwitch, MenuItem, Textbox, Select. `text` on Text, Avatar, CardTitle. `header`, `sub-header` and `content` on Card, Banner, Message, Expander and the state components. A bare child no slot takes disappears.
 2. **Containers need their parts.** A `Card` projects `CardHeader`, `CardContent`, `CardActions` and `CardFooter`, and a button placed directly inside it disappears.
-3. **`Text` has no typography prop.** Headlines are plain elements with `font: var(--mosaik-typography-headline3)`.
+3. **`Text` has no typography prop.** Semantic headlines are plain elements with the exact `font: var(--mosaik-typography-headline3)` role. Do not layer local weight, tracking or line-height adjustments over it.
 4. **`icon` is the icon name on every component.** A name that is not registered renders nothing, without an error.
 5. **Layout is native CSS.** `Stack` is deprecated, even where older documents or catalog recipes still use it. Take a recipe's anatomy and rebuild its layout natively.
 
