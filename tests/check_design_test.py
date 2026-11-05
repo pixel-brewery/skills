@@ -1,8 +1,10 @@
 """Exercise accepted and rejected design files through the public checker entry points."""
 
 import json
+import hashlib
 from pathlib import Path
 import runpy
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -170,6 +172,22 @@ class CheckDesignTests(unittest.TestCase):
         result = HELPER['check']([self.root, path])
         self.assertEqual(result.files, 1)
         self.assertEqual(result.components, 1)
+
+    def test_running_an_installed_checker_preserves_its_pinned_resource_hash(self):
+        installed = self.root / 'installed-designer'
+        shutil.copytree(SCRIPT.parents[1], installed, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
+
+        def snapshot():
+            return {str(path.relative_to(installed)): hashlib.sha256(path.read_bytes()).hexdigest()
+                    for path in installed.rglob('*') if path.is_file()}
+
+        before = snapshot()
+        view = self.write('<mosaik-button label="Save"></mosaik-button>', 'view.html')
+        # Exercise ordinary Linux Python cache behavior even on hosts that redirect caches.
+        runner = 'import runpy,sys; sys.pycache_prefix=None; sys.dont_write_bytecode=False; sys.argv=sys.argv[1:]; runpy.run_path(sys.argv[0], run_name="__main__")'
+        result = subprocess.run([sys.executable, '-c', runner, str(installed / 'scripts/check_design.py'), '--app', str(view)], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(snapshot(), before)
 
     def test_command_line_exit_codes(self):
         clean = self.write(board(BUTTON), 'Clean.dc.html')
