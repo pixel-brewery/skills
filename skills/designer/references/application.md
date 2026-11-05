@@ -33,7 +33,7 @@ Also set a page font and background, because your own markup otherwise renders i
 
 ```css
 body {
-  font-family: var(--mosaik-font-family);
+  font: var(--mosaik-typography-body2);
   color: var(--mosaik-scheme-foreground);
   background: var(--mosaik-scheme-background);
 }
@@ -92,14 +92,16 @@ Replace the theme name and the font for the other themes. See [foundations](foun
 
 ## Writing screens
 
-- Use the wrapper components of the framework. Every control is a component, see [components](components.md).
-- Own CSS is for layout, and it reads `--mosaik-*`. Do not copy values out of a component stylesheet.
-- Component tokens (`--<component>-<token>`) are public styling API for a deliberate local change. They are listed in `COMPONENTS.<theme>.md`. Do not use them to imitate another theme: override the theme instead.
+- Use the framework's Mosaik wrappers for every available semantic UI role, including Card parts, Badge, Message and state components as well as controls. Trace aliases and local feature wrappers to their actual imports and rendered composition; see [components](components.md) and [compliance](compliance.md).
+- Own CSS and Tailwind arrange layout. A token-painted card, divider or badge is still a handmade replacement. Plain headings/body text may bind the exact Mosaik typography role; do not add local weight, tracking or line-height overrides.
+- Component tokens (`--<component>-<token>`) are appearance API, not layout. A requested appearance change belongs to the maintained theme/component owner and its documented API and verification. Do not reset component anatomy/padding through utility-class custom properties or imitate another theme with local overrides.
 - With Tailwind, use the preset `@pixel-brewery/mosaik-themes/tailwind/v4/<theme>` for layout utilities, and keep its spacing equal to `layout.space`, because `mosaik-design-md` fails on a mismatch.
 
 ## Verifying
 
-Run the checker with `--app` on the templates you touched, then run the project's own checks, and look at the screens in a browser in both modes. If the project has `DESIGN.md`, run `npx mosaik-design-md check` after a theme change.
+Run the checker with `--app` on the affected UI owner, including templates, inline templates and owning CSS/SCSS. It follows supported local component/template/style references and reports unverifiable dynamic construction or provenance; include all remaining style owners explicitly. Resolve violations and disclose scope it could not inspect. The bundled component snapshot is versioned: a newer name needs verified catalog maintenance, not an exception comment.
+
+Run the project's existing build and UI checks and use the screen in a browser in both modes. Inspect the actual theme and Tailwind preset configuration; a static component count does not prove those are active. If the project maintains `DESIGN.md`, use its established installed-generator check after visual changes and regenerate only when maintained inputs changed. Do not add or upgrade packages to make a documentation command available. Complete [the evidence pass](compliance.md).
 
 ```js
 // Finds components that rendered with no size, usually wrong composition.
