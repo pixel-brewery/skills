@@ -28,6 +28,7 @@ For repository setup or structural work, read [Repository structure](references/
 | Providers, configuration, external I/O, lifecycle, bounded resources | [Platform](references/common/platform.md) |
 | Authorization, reads/files, AI, outbound destinations, events, cleanup | [Integration safety](references/common/backend-safety.md) |
 | Application UI and framework integration | [Frontend](references/common/frontend.md) |
+| Angular application Views, Signal Forms, Commands, routing and composition | [Angular application contract](references/common/angular.md), with [presenters](references/common/angular-presenters.md) and [service APIs](references/common/angular-services.md) for the affected boundary |
 | Forms, commands, asynchronous collections, localization, routing | [Frontend patterns](references/common/frontend-patterns.md) |
 | Calendar dates, instants, time zones, expiry and scheduling | [Date and time](references/common/date-time.md) |
 | Unit, integration, component, API and contract evidence | [Testing](references/common/testing.md), plus the production foundation |
