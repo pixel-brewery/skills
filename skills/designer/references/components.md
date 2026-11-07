@@ -1,6 +1,6 @@
 # Components
 
-Which Mosaik component answers which need, and the rules they share. Names are the React and canvas exports; the tag is `mosaik-` plus the kebab-case name (`ToggleSwitch`, `mosaik-toggle-switch`). Mosaik 0.1.185 has 383 components, so search before concluding that something is missing: `search_components`, `find_similar_components`, `get_component_docs`. These names route the search; verify the actual export, tag, props and slots against the installed package and live catalog before use.
+Which Mosaik component answers which need, and the rules they share. Names are the React and canvas exports; the tag is `mosaik-` plus the kebab-case name (`ToggleSwitch`, `mosaik-toggle-switch`). Mosaik 0.1.185 has 383 components, so search before concluding that something is missing: `search_components`, `find_similar_components`, `get_component_docs`. These names route the search; verify the actual export, tag, props and slots against the installed package and configured MCP catalog before use.
 
 Every available semantic role in the table uses its real component, including noninteractive surfaces and status. A token-styled `div` Card, `span` Badge, plain message or hand-painted loading state fails the same rule as a native button. Trace framework aliases and local feature wrappers to their Mosaik composition. A count or prefix is not provenance; unknown components and unresolved wrappers remain findings. Follow [compliance](compliance.md) for the permitted plain-markup boundary.
 
