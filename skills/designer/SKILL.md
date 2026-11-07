@@ -9,7 +9,7 @@ Build interfaces from the project's Mosaik foundations and real Mosaik component
 
 Read this before Mosaik interface work, including a new project with an interface. Keep the user's requested mode: a design question or review stays read-only unless implementation was requested. Apply the repository's local rules and architecture skill alongside this designer; it owns visual composition and interaction, while the architect owns engineering boundaries.
 
-When a repository requires this role and the live catalog for all design decisions, compose a local Designer through [project integration](references/project-integration.md). That reference owns the identical mandatory workflow; the local skill owns the project's foundations and runtime constraints.
+When a repository requires this role and MCP catalog evidence for all design decisions, compose a local Designer through [project integration](references/project-integration.md). That reference owns the identical mandatory workflow; the local skill owns the project's foundations, permitted catalog connection and runtime constraints.
 
 ## Detect and route automatically
 
@@ -92,7 +92,7 @@ For implementation or a new design, record it where it survives this conversatio
 
 ## Step 3: Consult the catalog
 
-Consult the `mosaik` MCP catalog before new compositions or design decisions, following [catalog](references/catalog.md), and keep the IDs and component documentation you used. Check Beta's deployed API against the installed package version. If consultation fails, retry once and report the exact failure. Continue only maintenance already established by documented installed sources when local rules permit it; do not invent a new composition or API from memory. A derived skill may require the live catalog and pause all dependent design decisions on failure. Never claim a consultation that did not happen.
+Consult the configured `mosaik` MCP catalog before new compositions or design decisions, following [catalog](references/catalog.md), and keep the IDs and component documentation you used. The hosted HTTP server and the versioned `@pixel-brewery/mosaik-mcp` stdio package provide the public catalog; the connection guide covers installation from GitHub Packages and offline operation. Use the transport permitted by the project, compare its catalog snapshot with the installed component package version, and report the source/version consulted. A project requiring the live Beta endpoint keeps that requirement; do not silently switch to a local snapshot. If consultation fails, retry once and report the exact failure. Continue only maintenance already established by documented installed sources when local rules permit it; do not invent a new composition or API from memory. A derived skill may require the live catalog and pause all dependent design decisions on failure. Never claim a consultation that did not happen.
 
 ## Step 4: Compose from components
 

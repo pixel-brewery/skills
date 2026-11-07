@@ -34,7 +34,7 @@ A literal color, number or string passed as domain data to a documented Mosaik c
 
 Only a noninteractive SVG/canvas illustration without a suitable component can declare `data-mosaik-illustration="specific reason"` on its own root. Report its location, data purpose and remaining accessibility checks. This declaration cannot cover a parent screen, an HTML control, an interactive diagram, an existing UI component, app chrome or controls inside the illustration. Its controls remain real Mosaik components. A broad ancestor marker does not exempt descendants from their rules.
 
-`data-mosaik-exception` and `mosaik-exception:` are not bypasses. When a component seems absent, search the live catalog and installed docs, record what was searched and report the remaining capability. A broken component is a Mosaik defect to reproduce; it is not permission to replace it silently.
+`data-mosaik-exception` and `mosaik-exception:` are not bypasses. When a component seems absent, search the configured MCP catalog and installed docs, record what was searched and report the remaining capability. A broken component is a Mosaik defect to reproduce; it is not permission to replace it silently.
 
 ## Evidence before completion
 
