@@ -1,6 +1,6 @@
 {
   "source": "@pixel-brewery/mosaik-elements-foundation/custom-elements.json",
-  "version": "0.1.185",
+  "version": "0.1.204",
   "tags": [
     "mosaik-absolute",
     "mosaik-absolute-item",
@@ -27,6 +27,7 @@
     "mosaik-box",
     "mosaik-breadcrumb",
     "mosaik-breadcrumb-item",
+    "mosaik-breakpoint",
     "mosaik-breakpoint-container",
     "mosaik-bubbles",
     "mosaik-busy-state",
@@ -53,7 +54,24 @@
     "mosaik-cell",
     "mosaik-cell-group",
     "mosaik-chart",
-    "mosaik-chart-toolbox",
+    "mosaik-chart-annotation",
+    "mosaik-chart-color-scale",
+    "mosaik-chart-data-labels",
+    "mosaik-chart-decimation",
+    "mosaik-chart-export",
+    "mosaik-chart-grid",
+    "mosaik-chart-group",
+    "mosaik-chart-legend",
+    "mosaik-chart-navigator",
+    "mosaik-chart-patterns",
+    "mosaik-chart-reference-band",
+    "mosaik-chart-reference-line",
+    "mosaik-chart-series",
+    "mosaik-chart-tooltip",
+    "mosaik-chart-trendline",
+    "mosaik-chart-x-axis",
+    "mosaik-chart-y-axis",
+    "mosaik-chart-zoom",
     "mosaik-chat",
     "mosaik-chat-header",
     "mosaik-chat-marker",
@@ -102,6 +120,7 @@
     "mosaik-cursor-effect",
     "mosaik-data-list",
     "mosaik-data-table",
+    "mosaik-data-tree",
     "mosaik-datebox",
     "mosaik-datetimebox",
     "mosaik-designer",
@@ -166,9 +185,11 @@
     "mosaik-flow-board",
     "mosaik-flow-board-column",
     "mosaik-flow-board-column-composer",
+    "mosaik-flow-board-column-group",
     "mosaik-flow-board-column-item",
     "mosaik-flow-board-column-item-composer",
     "mosaik-flow-board-column-item-group",
+    "mosaik-flow-board-swimlane",
     "mosaik-flow-controls",
     "mosaik-flow-edge",
     "mosaik-flow-minimap",
@@ -234,6 +255,7 @@
     "mosaik-message-content",
     "mosaik-meter-bar",
     "mosaik-meter-ring",
+    "mosaik-minimap",
     "mosaik-number",
     "mosaik-number-counter",
     "mosaik-number-ticker",
@@ -248,6 +270,8 @@
     "mosaik-paginator",
     "mosaik-parallax",
     "mosaik-particles",
+    "mosaik-password-strength-meter",
+    "mosaik-password-strength-rule",
     "mosaik-passwordbox",
     "mosaik-pattern",
     "mosaik-pendulum",
@@ -285,10 +309,15 @@
     "mosaik-richtextbox",
     "mosaik-richtextbox-toolbox",
     "mosaik-ripple",
+    "mosaik-router",
+    "mosaik-router-anchor",
+    "mosaik-router-link",
+    "mosaik-router-outlet",
     "mosaik-scale",
     "mosaik-scheduler",
     "mosaik-scheduler-agenda-date-header",
     "mosaik-scheduler-agenda-view",
+    "mosaik-scheduler-block",
     "mosaik-scheduler-cell-content",
     "mosaik-scheduler-datescale",
     "mosaik-scheduler-day-header",
@@ -298,6 +327,7 @@
     "mosaik-scheduler-header",
     "mosaik-scheduler-month-view",
     "mosaik-scheduler-now-indicator",
+    "mosaik-scheduler-resource",
     "mosaik-scheduler-resource-area-header",
     "mosaik-scheduler-resource-column-header",
     "mosaik-scheduler-resource-group",
@@ -312,6 +342,8 @@
     "mosaik-scheduler-timeline-view",
     "mosaik-scheduler-timescale",
     "mosaik-scheduler-view",
+    "mosaik-scheduler-view-option",
+    "mosaik-scheduler-working-hours",
     "mosaik-scroll",
     "mosaik-scrub-slider",
     "mosaik-searchbox",
@@ -327,7 +359,6 @@
     "mosaik-select-item",
     "mosaik-select-item-group",
     "mosaik-select-item-visual",
-    "mosaik-selector-item",
     "mosaik-sheet",
     "mosaik-sheet-content",
     "mosaik-sheet-footer",
@@ -352,21 +383,26 @@
     "mosaik-summary",
     "mosaik-swipe",
     "mosaik-tab",
+    "mosaik-tab-group-item",
     "mosaik-tab-item",
     "mosaik-tab-panel",
     "mosaik-tab-strip",
+    "mosaik-tab-strip-group-item",
     "mosaik-tab-strip-item",
     "mosaik-table",
     "mosaik-table-body",
     "mosaik-table-body-cell",
     "mosaik-table-body-row",
     "mosaik-table-column-editor",
+    "mosaik-table-detail-row",
     "mosaik-table-footer",
     "mosaik-table-footer-cell",
     "mosaik-table-footer-row",
+    "mosaik-table-group-row",
     "mosaik-table-header",
     "mosaik-table-header-cell",
     "mosaik-table-header-row",
+    "mosaik-template-selector",
     "mosaik-text",
     "mosaik-text-effect",
     "mosaik-text-format",
@@ -461,7 +497,24 @@
     "Cell",
     "CellGroup",
     "Chart",
-    "ChartToolbox",
+    "ChartAnnotation",
+    "ChartColorScale",
+    "ChartDataLabels",
+    "ChartDecimation",
+    "ChartExport",
+    "ChartGrid",
+    "ChartGroup",
+    "ChartLegend",
+    "ChartNavigator",
+    "ChartPatterns",
+    "ChartReferenceBand",
+    "ChartReferenceLine",
+    "ChartSeries",
+    "ChartTooltip",
+    "ChartTrendline",
+    "ChartXAxis",
+    "ChartYAxis",
+    "ChartZoom",
     "Chat",
     "ChatHeader",
     "ChatMarker",
@@ -509,6 +562,7 @@
     "CursorEffect",
     "DataList",
     "DataTable",
+    "DataTree",
     "Datebox",
     "Datetimebox",
     "Designer",
@@ -570,9 +624,11 @@
     "FlowBoard",
     "FlowBoardColumn",
     "FlowBoardColumnComposer",
+    "FlowBoardColumnGroup",
     "FlowBoardColumnItem",
     "FlowBoardColumnItemComposer",
     "FlowBoardColumnItemGroup",
+    "FlowBoardSwimlane",
     "FlowControls",
     "FlowEdge",
     "FlowMinimap",
@@ -637,6 +693,7 @@
     "MessageContent",
     "MeterBar",
     "MeterRing",
+    "Minimap",
     "MosaikThemeProvider",
     "Number",
     "NumberCounter",
@@ -652,6 +709,8 @@
     "Paginator",
     "Parallax",
     "Particles",
+    "PasswordStrengthMeter",
+    "PasswordStrengthRule",
     "Passwordbox",
     "Pattern",
     "Pendulum",
@@ -692,11 +751,13 @@
     "Scale",
     "Scheduler",
     "SchedulerAgendaDateHeader",
+    "SchedulerBlock",
     "SchedulerCellContent",
     "SchedulerDayHeader",
     "SchedulerEvent",
     "SchedulerEventContent",
     "SchedulerHeader",
+    "SchedulerResource",
     "SchedulerResourceAreaHeader",
     "SchedulerResourceColumnHeader",
     "SchedulerResourceGroup",
@@ -705,6 +766,8 @@
     "SchedulerTimeLabel",
     "SchedulerTimelineHeader",
     "SchedulerView",
+    "SchedulerViewOption",
+    "SchedulerWorkingHours",
     "Scroll",
     "ScrubSlider",
     "Searchbox",
@@ -744,18 +807,22 @@
     "Summary",
     "Swipe",
     "Tab",
+    "TabGroupItem",
     "TabItem",
     "TabPanel",
     "TabStrip",
+    "TabStripGroupItem",
     "TabStripItem",
     "Table",
     "TableBody",
     "TableBodyCell",
     "TableBodyRow",
     "TableColumnEditor",
+    "TableDetailRow",
     "TableFooter",
     "TableFooterCell",
     "TableFooterRow",
+    "TableGroupRow",
     "TableHeader",
     "TableHeaderCell",
     "TableHeaderRow",
@@ -897,6 +964,7 @@
       "CursorEffect",
       "DataList",
       "DataTable",
+      "DataTree",
       "Datebox",
       "Datetimebox",
       "Designer",
@@ -957,9 +1025,11 @@
       "FlowBoard",
       "FlowBoardColumn",
       "FlowBoardColumnComposer",
+      "FlowBoardColumnGroup",
       "FlowBoardColumnItem",
       "FlowBoardColumnItemComposer",
       "FlowBoardColumnItemGroup",
+      "FlowBoardSwimlane",
       "FocusRing",
       "FontEditor",
       "Footer",
@@ -1002,6 +1072,7 @@
       "MessageContent",
       "MeterBar",
       "MeterRing",
+      "Minimap",
       "Number",
       "NumberCounter",
       "NumberTicker",
@@ -1016,6 +1087,8 @@
       "Paginator",
       "Parallax",
       "Particles",
+      "PasswordStrengthMeter",
+      "PasswordStrengthRule",
       "Passwordbox",
       "Pattern",
       "Persona",
@@ -1053,11 +1126,13 @@
       "Scale",
       "Scheduler",
       "SchedulerAgendaDateHeader",
+      "SchedulerBlock",
       "SchedulerCellContent",
       "SchedulerDayHeader",
       "SchedulerEvent",
       "SchedulerEventContent",
       "SchedulerHeader",
+      "SchedulerResource",
       "SchedulerResourceAreaHeader",
       "SchedulerResourceColumnHeader",
       "SchedulerResourceGroup",
@@ -1066,6 +1141,8 @@
       "SchedulerTimeLabel",
       "SchedulerTimelineHeader",
       "SchedulerView",
+      "SchedulerViewOption",
+      "SchedulerWorkingHours",
       "Scroll",
       "ScrubSlider",
       "Searchbox",
@@ -1103,18 +1180,22 @@
       "Summary",
       "Swipe",
       "Tab",
+      "TabGroupItem",
       "TabItem",
       "TabPanel",
       "TabStrip",
+      "TabStripGroupItem",
       "TabStripItem",
       "Table",
       "TableBody",
       "TableBodyCell",
       "TableBodyRow",
       "TableColumnEditor",
+      "TableDetailRow",
       "TableFooter",
       "TableFooterCell",
       "TableFooterRow",
+      "TableGroupRow",
       "TableHeader",
       "TableHeaderCell",
       "TableHeaderRow",
@@ -1191,13 +1272,13 @@
     "@pixel-brewery/mosaik-elements-react/components/badge": [
       "Badge"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/banner-group": [
-      "BannerGroup"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/banner": [
       "Banner",
       "BannerHeader",
       "BannerSubHeader"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/banner-group": [
+      "BannerGroup"
     ],
     "@pixel-brewery/mosaik-elements-react/components/beam": [
       "Beam"
@@ -1231,9 +1312,6 @@
     "@pixel-brewery/mosaik-elements-react/components/camera": [
       "Camera"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/card-stack": [
-      "CardStack"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/card": [
       "Card",
       "CardActions",
@@ -1242,6 +1320,9 @@
       "CardHeader",
       "CardSubTitle",
       "CardTitle"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/card-stack": [
+      "CardStack"
     ],
     "@pixel-brewery/mosaik-elements-react/components/carousel": [
       "Carousel",
@@ -1253,7 +1334,24 @@
     ],
     "@pixel-brewery/mosaik-elements-react/components/chart": [
       "Chart",
-      "ChartToolbox"
+      "ChartAnnotation",
+      "ChartColorScale",
+      "ChartDataLabels",
+      "ChartDecimation",
+      "ChartExport",
+      "ChartGrid",
+      "ChartGroup",
+      "ChartLegend",
+      "ChartNavigator",
+      "ChartPatterns",
+      "ChartReferenceBand",
+      "ChartReferenceLine",
+      "ChartSeries",
+      "ChartTooltip",
+      "ChartTrendline",
+      "ChartXAxis",
+      "ChartYAxis",
+      "ChartZoom"
     ],
     "@pixel-brewery/mosaik-elements-react/components/chat": [
       "AttachmentChatTool",
@@ -1279,12 +1377,12 @@
     "@pixel-brewery/mosaik-elements-react/components/checkmark": [
       "Checkmark"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/chip-box": [
-      "Chipbox"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/chip": [
       "Chip",
       "ChipGroup"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/chip-box": [
+      "Chipbox"
     ],
     "@pixel-brewery/mosaik-elements-react/components/choice": [
       "Choice",
@@ -1294,11 +1392,11 @@
     "@pixel-brewery/mosaik-elements-react/components/clickable": [
       "Clickable"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/code-editor": [
-      "CodeEditor"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/code": [
       "Code"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/code-editor": [
+      "CodeEditor"
     ],
     "@pixel-brewery/mosaik-elements-react/components/color-area": [
       "ColorArea"
@@ -1352,6 +1450,9 @@
     ],
     "@pixel-brewery/mosaik-elements-react/components/data-table": [
       "DataTable"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/data-tree": [
+      "DataTree"
     ],
     "@pixel-brewery/mosaik-elements-react/components/date-box": [
       "Datebox"
@@ -1430,11 +1531,11 @@
     "@pixel-brewery/mosaik-elements-react/components/empty": [
       "EmptyState"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/error-state": [
-      "ErrorState"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/error": [
       "Error"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/error-state": [
+      "ErrorState"
     ],
     "@pixel-brewery/mosaik-elements-react/components/expandable": [
       "Expandable"
@@ -1456,21 +1557,13 @@
     "@pixel-brewery/mosaik-elements-react/components/flip": [
       "Flip"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/floating-action-button": [
-      "Fab",
-      "FabGroup"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/floating": [
       "Floating",
       "FloatingTrigger"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/flow-board": [
-      "FlowBoard",
-      "FlowBoardColumn",
-      "FlowBoardColumnComposer",
-      "FlowBoardColumnItem",
-      "FlowBoardColumnItemComposer",
-      "FlowBoardColumnItemGroup"
+    "@pixel-brewery/mosaik-elements-react/components/floating-action-button": [
+      "Fab",
+      "FabGroup"
     ],
     "@pixel-brewery/mosaik-elements-react/components/flow": [
       "Flow",
@@ -1478,6 +1571,16 @@
       "FlowEdge",
       "FlowMinimap",
       "FlowNode"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/flow-board": [
+      "FlowBoard",
+      "FlowBoardColumn",
+      "FlowBoardColumnComposer",
+      "FlowBoardColumnGroup",
+      "FlowBoardColumnItem",
+      "FlowBoardColumnItemComposer",
+      "FlowBoardColumnItemGroup",
+      "FlowBoardSwimlane"
     ],
     "@pixel-brewery/mosaik-elements-react/components/focus-ring": [
       "FocusRing"
@@ -1582,12 +1685,12 @@
       "MenuItem",
       "MenuItemGroup"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/message-box": [
-      "MessageBox"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/message": [
       "Message",
       "MessageContent"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/message-box": [
+      "MessageBox"
     ],
     "@pixel-brewery/mosaik-elements-react/components/meter-bar": [
       "MeterBar"
@@ -1595,15 +1698,18 @@
     "@pixel-brewery/mosaik-elements-react/components/meter-ring": [
       "MeterRing"
     ],
+    "@pixel-brewery/mosaik-elements-react/components/minimap": [
+      "Minimap"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/number": [
+      "Number",
+      "NumberCounter"
+    ],
     "@pixel-brewery/mosaik-elements-react/components/number-box": [
       "Numberbox"
     ],
     "@pixel-brewery/mosaik-elements-react/components/number-ticker": [
       "NumberTicker"
-    ],
-    "@pixel-brewery/mosaik-elements-react/components/number": [
-      "Number",
-      "NumberCounter"
     ],
     "@pixel-brewery/mosaik-elements-react/components/orbit": [
       "Orbit"
@@ -1627,6 +1733,10 @@
     ],
     "@pixel-brewery/mosaik-elements-react/components/password-box": [
       "Passwordbox"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/password-strength-meter": [
+      "PasswordStrengthMeter",
+      "PasswordStrengthRule"
     ],
     "@pixel-brewery/mosaik-elements-react/components/pattern": [
       "Pattern"
@@ -1693,14 +1803,14 @@
     "@pixel-brewery/mosaik-elements-react/components/repeat-button": [
       "RepeatButton"
     ],
+    "@pixel-brewery/mosaik-elements-react/components/resize": [
+      "Resize"
+    ],
     "@pixel-brewery/mosaik-elements-react/components/resize-adorner": [
       "ResizeAdorner"
     ],
     "@pixel-brewery/mosaik-elements-react/components/resize-thumb": [
       "ResizeThumb"
-    ],
-    "@pixel-brewery/mosaik-elements-react/components/resize": [
-      "Resize"
     ],
     "@pixel-brewery/mosaik-elements-react/components/reveal": [
       "Reveal"
@@ -1721,11 +1831,13 @@
     "@pixel-brewery/mosaik-elements-react/components/scheduler": [
       "Scheduler",
       "SchedulerAgendaDateHeader",
+      "SchedulerBlock",
       "SchedulerCellContent",
       "SchedulerDayHeader",
       "SchedulerEvent",
       "SchedulerEventContent",
       "SchedulerHeader",
+      "SchedulerResource",
       "SchedulerResourceAreaHeader",
       "SchedulerResourceColumnHeader",
       "SchedulerResourceGroup",
@@ -1733,7 +1845,9 @@
       "SchedulerSelectionToolbar",
       "SchedulerTimeLabel",
       "SchedulerTimelineHeader",
-      "SchedulerView"
+      "SchedulerView",
+      "SchedulerViewOption",
+      "SchedulerWorkingHours"
     ],
     "@pixel-brewery/mosaik-elements-react/components/scroll": [
       "Scroll"
@@ -1743,6 +1857,10 @@
     ],
     "@pixel-brewery/mosaik-elements-react/components/search-box": [
       "Searchbox"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/segment": [
+      "Segment",
+      "SegmentItem"
     ],
     "@pixel-brewery/mosaik-elements-react/components/segment-bar": [
       "SegmentBar",
@@ -1755,10 +1873,6 @@
     "@pixel-brewery/mosaik-elements-react/components/segment-ring": [
       "SegmentRing",
       "SegmentRingItem"
-    ],
-    "@pixel-brewery/mosaik-elements-react/components/segment": [
-      "Segment",
-      "SegmentItem"
     ],
     "@pixel-brewery/mosaik-elements-react/components/select": [
       "Select",
@@ -1797,11 +1911,11 @@
     "@pixel-brewery/mosaik-elements-react/components/spline": [
       "Spline"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/split-button": [
-      "SplitButton"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/split": [
       "Split"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/split-button": [
+      "SplitButton"
     ],
     "@pixel-brewery/mosaik-elements-react/components/stack": [
       "Stack"
@@ -1822,14 +1936,16 @@
     "@pixel-brewery/mosaik-elements-react/components/swipe": [
       "Swipe"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/tab-strip": [
-      "TabStrip",
-      "TabStripItem"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/tab": [
       "Tab",
+      "TabGroupItem",
       "TabItem",
       "TabPanel"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/tab-strip": [
+      "TabStrip",
+      "TabStripGroupItem",
+      "TabStripItem"
     ],
     "@pixel-brewery/mosaik-elements-react/components/table": [
       "Table",
@@ -1837,12 +1953,17 @@
       "TableBodyCell",
       "TableBodyRow",
       "TableColumnEditor",
+      "TableDetailRow",
       "TableFooter",
       "TableFooterCell",
       "TableFooterRow",
+      "TableGroupRow",
       "TableHeader",
       "TableHeaderCell",
       "TableHeaderRow"
+    ],
+    "@pixel-brewery/mosaik-elements-react/components/text": [
+      "Text"
     ],
     "@pixel-brewery/mosaik-elements-react/components/text-box": [
       "Textbox"
@@ -1856,9 +1977,6 @@
     "@pixel-brewery/mosaik-elements-react/components/text-suggestions": [
       "SuggestionMenu"
     ],
-    "@pixel-brewery/mosaik-elements-react/components/text": [
-      "Text"
-    ],
     "@pixel-brewery/mosaik-elements-react/components/theming": [
       "Theme2"
     ],
@@ -1871,6 +1989,9 @@
     "@pixel-brewery/mosaik-elements-react/components/tick-bar": [
       "TickBar"
     ],
+    "@pixel-brewery/mosaik-elements-react/components/tile": [
+      "Tile"
+    ],
     "@pixel-brewery/mosaik-elements-react/components/tile-list": [
       "TileList",
       "TileListItem"
@@ -1878,9 +1999,6 @@
     "@pixel-brewery/mosaik-elements-react/components/tile-manager": [
       "TileManager",
       "TileManagerTile"
-    ],
-    "@pixel-brewery/mosaik-elements-react/components/tile": [
-      "Tile"
     ],
     "@pixel-brewery/mosaik-elements-react/components/time-box": [
       "Timebox"
@@ -2039,6 +2157,7 @@
       "CursorEffectComponent",
       "DataListComponent",
       "DataTableComponent",
+      "DataTreeComponent",
       "DateboxComponent",
       "DatetimeboxComponent",
       "DesignerCanvasComponent",
@@ -2098,10 +2217,12 @@
       "FloatingTriggerComponent",
       "FlowBoardColumnComponent",
       "FlowBoardColumnComposerComponent",
+      "FlowBoardColumnGroupComponent",
       "FlowBoardColumnItemComponent",
       "FlowBoardColumnItemComposerComponent",
       "FlowBoardColumnItemGroupComponent",
       "FlowBoardComponent",
+      "FlowBoardSwimlaneComponent",
       "FocusRingComponent",
       "FontEditorComponent",
       "FooterComponent",
@@ -2144,6 +2265,7 @@
       "MessageContentComponent",
       "MeterBarComponent",
       "MeterRingComponent",
+      "MinimapComponent",
       "MosaikElementsPlugin",
       "NumberComponent",
       "NumberCounterComponent",
@@ -2159,6 +2281,8 @@
       "PaginatorComponent",
       "ParallaxComponent",
       "ParticlesComponent",
+      "PasswordStrengthMeterComponent",
+      "PasswordStrengthRuleComponent",
       "PasswordboxComponent",
       "PatternComponent",
       "PersonaComponent",
@@ -2195,6 +2319,7 @@
       "RippleComponent",
       "ScaleComponent",
       "SchedulerAgendaDateHeaderComponent",
+      "SchedulerBlockComponent",
       "SchedulerCellContentComponent",
       "SchedulerComponent",
       "SchedulerDayHeaderComponent",
@@ -2203,12 +2328,15 @@
       "SchedulerHeaderComponent",
       "SchedulerResourceAreaHeaderComponent",
       "SchedulerResourceColumnHeaderComponent",
+      "SchedulerResourceComponent",
       "SchedulerResourceGroupComponent",
       "SchedulerResourceRowComponent",
       "SchedulerSelectionToolbarComponent",
       "SchedulerTimeLabelComponent",
       "SchedulerTimelineHeaderComponent",
       "SchedulerViewComponent",
+      "SchedulerViewOptionComponent",
+      "SchedulerWorkingHoursComponent",
       "ScrollComponent",
       "ScrubSliderComponent",
       "SearchboxComponent",
@@ -2247,18 +2375,22 @@
       "SummaryComponent",
       "SwipeComponent",
       "TabComponent",
+      "TabGroupItemComponent",
       "TabItemComponent",
       "TabPanelComponent",
       "TabStripComponent",
+      "TabStripGroupItemComponent",
       "TabStripItemComponent",
       "TableBodyCellComponent",
       "TableBodyComponent",
       "TableBodyRowComponent",
       "TableColumnEditorComponent",
       "TableComponent",
+      "TableDetailRowComponent",
       "TableFooterCellComponent",
       "TableFooterComponent",
       "TableFooterRowComponent",
+      "TableGroupRowComponent",
       "TableHeaderCellComponent",
       "TableHeaderComponent",
       "TableHeaderRowComponent",
@@ -2335,13 +2467,13 @@
     "@pixel-brewery/mosaik-elements-vue/components/badge": [
       "BadgeComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/banner-group": [
-      "BannerGroupComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/banner": [
       "BannerComponent",
       "BannerHeaderComponent",
       "BannerSubHeaderComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/banner-group": [
+      "BannerGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/beam": [
       "BeamComponent"
@@ -2375,9 +2507,6 @@
     "@pixel-brewery/mosaik-elements-vue/components/camera": [
       "CameraComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/card-stack": [
-      "CardStackComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/card": [
       "CardActionsComponent",
       "CardComponent",
@@ -2386,6 +2515,9 @@
       "CardHeaderComponent",
       "CardSubTitleComponent",
       "CardTitleComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/card-stack": [
+      "CardStackComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/carousel": [
       "CarouselComponent",
@@ -2396,8 +2528,25 @@
       "CellGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/chart": [
+      "ChartAnnotationComponent",
+      "ChartColorScaleComponent",
       "ChartComponent",
-      "ChartToolboxComponent",
+      "ChartDataLabelsComponent",
+      "ChartDecimationComponent",
+      "ChartExportComponent",
+      "ChartGridComponent",
+      "ChartGroupComponent",
+      "ChartLegendComponent",
+      "ChartNavigatorComponent",
+      "ChartPatternsComponent",
+      "ChartReferenceBandComponent",
+      "ChartReferenceLineComponent",
+      "ChartSeriesComponent",
+      "ChartTooltipComponent",
+      "ChartTrendlineComponent",
+      "ChartXAxisComponent",
+      "ChartYAxisComponent",
+      "ChartZoomComponent",
       "MosaikChartPlugin"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/chat": [
@@ -2424,12 +2573,12 @@
     "@pixel-brewery/mosaik-elements-vue/components/checkmark": [
       "CheckmarkComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/chip-box": [
-      "ChipboxComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/chip": [
       "ChipComponent",
       "ChipGroupComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/chip-box": [
+      "ChipboxComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/choice": [
       "ChoiceComponent",
@@ -2439,12 +2588,12 @@
     "@pixel-brewery/mosaik-elements-vue/components/clickable": [
       "ClickableComponent"
     ],
+    "@pixel-brewery/mosaik-elements-vue/components/code": [
+      "CodeComponent"
+    ],
     "@pixel-brewery/mosaik-elements-vue/components/code-editor": [
       "CodeEditorComponent",
       "MosaikCodeEditorPlugin"
-    ],
-    "@pixel-brewery/mosaik-elements-vue/components/code": [
-      "CodeComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/color-area": [
       "ColorAreaComponent"
@@ -2498,6 +2647,9 @@
     ],
     "@pixel-brewery/mosaik-elements-vue/components/data-table": [
       "DataTableComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/data-tree": [
+      "DataTreeComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/date-box": [
       "DateboxComponent"
@@ -2576,11 +2728,11 @@
     "@pixel-brewery/mosaik-elements-vue/components/empty": [
       "EmptyStateComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/error-state": [
-      "ErrorStateComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/error": [
       "ErrorComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/error-state": [
+      "ErrorStateComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/expandable": [
       "ExpandableComponent"
@@ -2602,21 +2754,13 @@
     "@pixel-brewery/mosaik-elements-vue/components/flip": [
       "FlipComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/floating-action-button": [
-      "FabComponent",
-      "FabGroupComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/floating": [
       "FloatingComponent",
       "FloatingTriggerComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/flow-board": [
-      "FlowBoardColumnComponent",
-      "FlowBoardColumnComposerComponent",
-      "FlowBoardColumnItemComponent",
-      "FlowBoardColumnItemComposerComponent",
-      "FlowBoardColumnItemGroupComponent",
-      "FlowBoardComponent"
+    "@pixel-brewery/mosaik-elements-vue/components/floating-action-button": [
+      "FabComponent",
+      "FabGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/flow": [
       "FlowComponent",
@@ -2625,6 +2769,16 @@
       "FlowMinimapComponent",
       "FlowNodeComponent",
       "MosaikFlowPlugin"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/flow-board": [
+      "FlowBoardColumnComponent",
+      "FlowBoardColumnComposerComponent",
+      "FlowBoardColumnGroupComponent",
+      "FlowBoardColumnItemComponent",
+      "FlowBoardColumnItemComposerComponent",
+      "FlowBoardColumnItemGroupComponent",
+      "FlowBoardComponent",
+      "FlowBoardSwimlaneComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/focus-ring": [
       "FocusRingComponent"
@@ -2732,12 +2886,12 @@
       "MenuItemComponent",
       "MenuItemGroupComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/message-box": [
-      "MessageBoxComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/message": [
       "MessageComponent",
       "MessageContentComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/message-box": [
+      "MessageBoxComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/meter-bar": [
       "MeterBarComponent"
@@ -2745,15 +2899,18 @@
     "@pixel-brewery/mosaik-elements-vue/components/meter-ring": [
       "MeterRingComponent"
     ],
+    "@pixel-brewery/mosaik-elements-vue/components/minimap": [
+      "MinimapComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/number": [
+      "NumberComponent",
+      "NumberCounterComponent"
+    ],
     "@pixel-brewery/mosaik-elements-vue/components/number-box": [
       "NumberboxComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/number-ticker": [
       "NumberTickerComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-vue/components/number": [
-      "NumberComponent",
-      "NumberCounterComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/orbit": [
       "OrbitComponent"
@@ -2777,6 +2934,10 @@
     ],
     "@pixel-brewery/mosaik-elements-vue/components/password-box": [
       "PasswordboxComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/password-strength-meter": [
+      "PasswordStrengthMeterComponent",
+      "PasswordStrengthRuleComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/pattern": [
       "PatternComponent"
@@ -2844,14 +3005,14 @@
     "@pixel-brewery/mosaik-elements-vue/components/repeat-button": [
       "RepeatButtonComponent"
     ],
+    "@pixel-brewery/mosaik-elements-vue/components/resize": [
+      "ResizeComponent"
+    ],
     "@pixel-brewery/mosaik-elements-vue/components/resize-adorner": [
       "ResizeAdornerComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/resize-thumb": [
       "ResizeThumbComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-vue/components/resize": [
-      "ResizeComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/reveal": [
       "RevealComponent"
@@ -2872,6 +3033,7 @@
     ],
     "@pixel-brewery/mosaik-elements-vue/components/scheduler": [
       "SchedulerAgendaDateHeaderComponent",
+      "SchedulerBlockComponent",
       "SchedulerCellContentComponent",
       "SchedulerComponent",
       "SchedulerDayHeaderComponent",
@@ -2880,12 +3042,15 @@
       "SchedulerHeaderComponent",
       "SchedulerResourceAreaHeaderComponent",
       "SchedulerResourceColumnHeaderComponent",
+      "SchedulerResourceComponent",
       "SchedulerResourceGroupComponent",
       "SchedulerResourceRowComponent",
       "SchedulerSelectionToolbarComponent",
       "SchedulerTimeLabelComponent",
       "SchedulerTimelineHeaderComponent",
-      "SchedulerViewComponent"
+      "SchedulerViewComponent",
+      "SchedulerViewOptionComponent",
+      "SchedulerWorkingHoursComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/scroll": [
       "ScrollComponent"
@@ -2895,6 +3060,10 @@
     ],
     "@pixel-brewery/mosaik-elements-vue/components/search-box": [
       "SearchboxComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/segment": [
+      "SegmentComponent",
+      "SegmentItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/segment-bar": [
       "SegmentBarComponent",
@@ -2907,10 +3076,6 @@
     "@pixel-brewery/mosaik-elements-vue/components/segment-ring": [
       "SegmentRingComponent",
       "SegmentRingItemComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-vue/components/segment": [
-      "SegmentComponent",
-      "SegmentItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/select": [
       "SelectComponent",
@@ -2951,11 +3116,11 @@
       "MosaikSplinePlugin",
       "SplineComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/split-button": [
-      "SplitButtonComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/split": [
       "SplitComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/split-button": [
+      "SplitButtonComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/stack": [
       "StackComponent"
@@ -2976,14 +3141,16 @@
     "@pixel-brewery/mosaik-elements-vue/components/swipe": [
       "SwipeComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/tab-strip": [
-      "TabStripComponent",
-      "TabStripItemComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/tab": [
       "TabComponent",
+      "TabGroupItemComponent",
       "TabItemComponent",
       "TabPanelComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/tab-strip": [
+      "TabStripComponent",
+      "TabStripGroupItemComponent",
+      "TabStripItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/table": [
       "TableBodyCellComponent",
@@ -2991,12 +3158,17 @@
       "TableBodyRowComponent",
       "TableColumnEditorComponent",
       "TableComponent",
+      "TableDetailRowComponent",
       "TableFooterCellComponent",
       "TableFooterComponent",
       "TableFooterRowComponent",
+      "TableGroupRowComponent",
       "TableHeaderCellComponent",
       "TableHeaderComponent",
       "TableHeaderRowComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-vue/components/text": [
+      "TextComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/text-box": [
       "TextboxComponent"
@@ -3010,9 +3182,6 @@
     "@pixel-brewery/mosaik-elements-vue/components/text-suggestions": [
       "SuggestionMenuComponent"
     ],
-    "@pixel-brewery/mosaik-elements-vue/components/text": [
-      "TextComponent"
-    ],
     "@pixel-brewery/mosaik-elements-vue/components/theming": [
       "Theme2Component"
     ],
@@ -3025,6 +3194,9 @@
     "@pixel-brewery/mosaik-elements-vue/components/tick-bar": [
       "TickBarComponent"
     ],
+    "@pixel-brewery/mosaik-elements-vue/components/tile": [
+      "TileComponent"
+    ],
     "@pixel-brewery/mosaik-elements-vue/components/tile-list": [
       "TileListComponent",
       "TileListItemComponent"
@@ -3032,9 +3204,6 @@
     "@pixel-brewery/mosaik-elements-vue/components/tile-manager": [
       "TileManagerComponent",
       "TileManagerTileComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-vue/components/tile": [
-      "TileComponent"
     ],
     "@pixel-brewery/mosaik-elements-vue/components/time-box": [
       "TimeboxComponent"
@@ -3192,6 +3361,7 @@
       "MosaikCursorEffect",
       "MosaikDataList",
       "MosaikDataTable",
+      "MosaikDataTree",
       "MosaikDatebox",
       "MosaikDatetimebox",
       "MosaikDesigner",
@@ -3252,9 +3422,11 @@
       "MosaikFlowBoard",
       "MosaikFlowBoardColumn",
       "MosaikFlowBoardColumnComposer",
+      "MosaikFlowBoardColumnGroup",
       "MosaikFlowBoardColumnItem",
       "MosaikFlowBoardColumnItemComposer",
       "MosaikFlowBoardColumnItemGroup",
+      "MosaikFlowBoardSwimlane",
       "MosaikFocusRing",
       "MosaikFontEditor",
       "MosaikFooter",
@@ -3297,6 +3469,7 @@
       "MosaikMessageContent",
       "MosaikMeterBar",
       "MosaikMeterRing",
+      "MosaikMinimap",
       "MosaikNumber",
       "MosaikNumberCounter",
       "MosaikNumberTicker",
@@ -3311,6 +3484,8 @@
       "MosaikPaginator",
       "MosaikParallax",
       "MosaikParticles",
+      "MosaikPasswordStrengthMeter",
+      "MosaikPasswordStrengthRule",
       "MosaikPasswordbox",
       "MosaikPattern",
       "MosaikPersona",
@@ -3348,11 +3523,13 @@
       "MosaikScale",
       "MosaikScheduler",
       "MosaikSchedulerAgendaDateHeader",
+      "MosaikSchedulerBlock",
       "MosaikSchedulerCellContent",
       "MosaikSchedulerDayHeader",
       "MosaikSchedulerEvent",
       "MosaikSchedulerEventContent",
       "MosaikSchedulerHeader",
+      "MosaikSchedulerResource",
       "MosaikSchedulerResourceAreaHeader",
       "MosaikSchedulerResourceColumnHeader",
       "MosaikSchedulerResourceGroup",
@@ -3361,6 +3538,8 @@
       "MosaikSchedulerTimeLabel",
       "MosaikSchedulerTimelineHeader",
       "MosaikSchedulerView",
+      "MosaikSchedulerViewOption",
+      "MosaikSchedulerWorkingHours",
       "MosaikScroll",
       "MosaikScrubSlider",
       "MosaikSearchbox",
@@ -3398,18 +3577,22 @@
       "MosaikSummary",
       "MosaikSwipe",
       "MosaikTab",
+      "MosaikTabGroupItem",
       "MosaikTabItem",
       "MosaikTabPanel",
       "MosaikTabStrip",
+      "MosaikTabStripGroupItem",
       "MosaikTabStripItem",
       "MosaikTable",
       "MosaikTableBody",
       "MosaikTableBodyCell",
       "MosaikTableBodyRow",
       "MosaikTableColumnEditor",
+      "MosaikTableDetailRow",
       "MosaikTableFooter",
       "MosaikTableFooterCell",
       "MosaikTableFooterRow",
+      "MosaikTableGroupRow",
       "MosaikTableHeader",
       "MosaikTableHeaderCell",
       "MosaikTableHeaderRow",
@@ -3486,13 +3669,13 @@
     "@pixel-brewery/mosaik-elements-svelte/components/badge": [
       "MosaikBadge"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/banner-group": [
-      "MosaikBannerGroup"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/banner": [
       "MosaikBanner",
       "MosaikBannerHeader",
       "MosaikBannerSubHeader"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/banner-group": [
+      "MosaikBannerGroup"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/beam": [
       "MosaikBeam"
@@ -3526,9 +3709,6 @@
     "@pixel-brewery/mosaik-elements-svelte/components/camera": [
       "MosaikCamera"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/card-stack": [
-      "MosaikCardStack"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/card": [
       "MosaikCard",
       "MosaikCardActions",
@@ -3537,6 +3717,9 @@
       "MosaikCardHeader",
       "MosaikCardSubTitle",
       "MosaikCardTitle"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/card-stack": [
+      "MosaikCardStack"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/carousel": [
       "MosaikCarousel",
@@ -3548,7 +3731,24 @@
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/chart": [
       "MosaikChart",
-      "MosaikChartToolbox"
+      "MosaikChartAnnotation",
+      "MosaikChartColorScale",
+      "MosaikChartDataLabels",
+      "MosaikChartDecimation",
+      "MosaikChartExport",
+      "MosaikChartGrid",
+      "MosaikChartGroup",
+      "MosaikChartLegend",
+      "MosaikChartNavigator",
+      "MosaikChartPatterns",
+      "MosaikChartReferenceBand",
+      "MosaikChartReferenceLine",
+      "MosaikChartSeries",
+      "MosaikChartTooltip",
+      "MosaikChartTrendline",
+      "MosaikChartXAxis",
+      "MosaikChartYAxis",
+      "MosaikChartZoom"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/chat": [
       "MosaikAttachmentChatTool",
@@ -3574,12 +3774,12 @@
     "@pixel-brewery/mosaik-elements-svelte/components/checkmark": [
       "MosaikCheckmark"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/chip-box": [
-      "MosaikChipbox"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/chip": [
       "MosaikChip",
       "MosaikChipGroup"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/chip-box": [
+      "MosaikChipbox"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/choice": [
       "MosaikChoice",
@@ -3589,11 +3789,11 @@
     "@pixel-brewery/mosaik-elements-svelte/components/clickable": [
       "MosaikClickable"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/code-editor": [
-      "MosaikCodeEditor"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/code": [
       "MosaikCode"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/code-editor": [
+      "MosaikCodeEditor"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/color-area": [
       "MosaikColorArea"
@@ -3647,6 +3847,9 @@
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/data-table": [
       "MosaikDataTable"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/data-tree": [
+      "MosaikDataTree"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/date-box": [
       "MosaikDatebox"
@@ -3725,11 +3928,11 @@
     "@pixel-brewery/mosaik-elements-svelte/components/empty": [
       "MosaikEmptyState"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/error-state": [
-      "MosaikErrorState"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/error": [
       "MosaikError"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/error-state": [
+      "MosaikErrorState"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/expandable": [
       "MosaikExpandable"
@@ -3751,21 +3954,13 @@
     "@pixel-brewery/mosaik-elements-svelte/components/flip": [
       "MosaikFlip"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/floating-action-button": [
-      "MosaikFab",
-      "MosaikFabGroup"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/floating": [
       "MosaikFloating",
       "MosaikFloatingTrigger"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/flow-board": [
-      "MosaikFlowBoard",
-      "MosaikFlowBoardColumn",
-      "MosaikFlowBoardColumnComposer",
-      "MosaikFlowBoardColumnItem",
-      "MosaikFlowBoardColumnItemComposer",
-      "MosaikFlowBoardColumnItemGroup"
+    "@pixel-brewery/mosaik-elements-svelte/components/floating-action-button": [
+      "MosaikFab",
+      "MosaikFabGroup"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/flow": [
       "MosaikFlow",
@@ -3773,6 +3968,16 @@
       "MosaikFlowEdge",
       "MosaikFlowMinimap",
       "MosaikFlowNode"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/flow-board": [
+      "MosaikFlowBoard",
+      "MosaikFlowBoardColumn",
+      "MosaikFlowBoardColumnComposer",
+      "MosaikFlowBoardColumnGroup",
+      "MosaikFlowBoardColumnItem",
+      "MosaikFlowBoardColumnItemComposer",
+      "MosaikFlowBoardColumnItemGroup",
+      "MosaikFlowBoardSwimlane"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/focus-ring": [
       "MosaikFocusRing"
@@ -3877,12 +4082,12 @@
       "MosaikMenuItem",
       "MosaikMenuItemGroup"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/message-box": [
-      "MosaikMessageBox"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/message": [
       "MosaikMessage",
       "MosaikMessageContent"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/message-box": [
+      "MosaikMessageBox"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/meter-bar": [
       "MosaikMeterBar"
@@ -3890,15 +4095,18 @@
     "@pixel-brewery/mosaik-elements-svelte/components/meter-ring": [
       "MosaikMeterRing"
     ],
+    "@pixel-brewery/mosaik-elements-svelte/components/minimap": [
+      "MosaikMinimap"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/number": [
+      "MosaikNumber",
+      "MosaikNumberCounter"
+    ],
     "@pixel-brewery/mosaik-elements-svelte/components/number-box": [
       "MosaikNumberbox"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/number-ticker": [
       "MosaikNumberTicker"
-    ],
-    "@pixel-brewery/mosaik-elements-svelte/components/number": [
-      "MosaikNumber",
-      "MosaikNumberCounter"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/orbit": [
       "MosaikOrbit"
@@ -3922,6 +4130,10 @@
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/password-box": [
       "MosaikPasswordbox"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/password-strength-meter": [
+      "MosaikPasswordStrengthMeter",
+      "MosaikPasswordStrengthRule"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/pattern": [
       "MosaikPattern"
@@ -3988,14 +4200,14 @@
     "@pixel-brewery/mosaik-elements-svelte/components/repeat-button": [
       "MosaikRepeatButton"
     ],
+    "@pixel-brewery/mosaik-elements-svelte/components/resize": [
+      "MosaikResize"
+    ],
     "@pixel-brewery/mosaik-elements-svelte/components/resize-adorner": [
       "MosaikResizeAdorner"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/resize-thumb": [
       "MosaikResizeThumb"
-    ],
-    "@pixel-brewery/mosaik-elements-svelte/components/resize": [
-      "MosaikResize"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/reveal": [
       "MosaikReveal"
@@ -4016,11 +4228,13 @@
     "@pixel-brewery/mosaik-elements-svelte/components/scheduler": [
       "MosaikScheduler",
       "MosaikSchedulerAgendaDateHeader",
+      "MosaikSchedulerBlock",
       "MosaikSchedulerCellContent",
       "MosaikSchedulerDayHeader",
       "MosaikSchedulerEvent",
       "MosaikSchedulerEventContent",
       "MosaikSchedulerHeader",
+      "MosaikSchedulerResource",
       "MosaikSchedulerResourceAreaHeader",
       "MosaikSchedulerResourceColumnHeader",
       "MosaikSchedulerResourceGroup",
@@ -4028,7 +4242,9 @@
       "MosaikSchedulerSelectionToolbar",
       "MosaikSchedulerTimeLabel",
       "MosaikSchedulerTimelineHeader",
-      "MosaikSchedulerView"
+      "MosaikSchedulerView",
+      "MosaikSchedulerViewOption",
+      "MosaikSchedulerWorkingHours"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/scroll": [
       "MosaikScroll"
@@ -4038,6 +4254,10 @@
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/search-box": [
       "MosaikSearchbox"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/segment": [
+      "MosaikSegment",
+      "MosaikSegmentItem"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/segment-bar": [
       "MosaikSegmentBar",
@@ -4050,10 +4270,6 @@
     "@pixel-brewery/mosaik-elements-svelte/components/segment-ring": [
       "MosaikSegmentRing",
       "MosaikSegmentRingItem"
-    ],
-    "@pixel-brewery/mosaik-elements-svelte/components/segment": [
-      "MosaikSegment",
-      "MosaikSegmentItem"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/select": [
       "MosaikSelect",
@@ -4092,11 +4308,11 @@
     "@pixel-brewery/mosaik-elements-svelte/components/spline": [
       "MosaikSpline"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/split-button": [
-      "MosaikSplitButton"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/split": [
       "MosaikSplit"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/split-button": [
+      "MosaikSplitButton"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/stack": [
       "MosaikStack"
@@ -4117,14 +4333,16 @@
     "@pixel-brewery/mosaik-elements-svelte/components/swipe": [
       "MosaikSwipe"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/tab-strip": [
-      "MosaikTabStrip",
-      "MosaikTabStripItem"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/tab": [
       "MosaikTab",
+      "MosaikTabGroupItem",
       "MosaikTabItem",
       "MosaikTabPanel"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/tab-strip": [
+      "MosaikTabStrip",
+      "MosaikTabStripGroupItem",
+      "MosaikTabStripItem"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/table": [
       "MosaikTable",
@@ -4132,12 +4350,17 @@
       "MosaikTableBodyCell",
       "MosaikTableBodyRow",
       "MosaikTableColumnEditor",
+      "MosaikTableDetailRow",
       "MosaikTableFooter",
       "MosaikTableFooterCell",
       "MosaikTableFooterRow",
+      "MosaikTableGroupRow",
       "MosaikTableHeader",
       "MosaikTableHeaderCell",
       "MosaikTableHeaderRow"
+    ],
+    "@pixel-brewery/mosaik-elements-svelte/components/text": [
+      "MosaikText"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/text-box": [
       "MosaikTextbox"
@@ -4151,9 +4374,6 @@
     "@pixel-brewery/mosaik-elements-svelte/components/text-suggestions": [
       "MosaikSuggestionMenu"
     ],
-    "@pixel-brewery/mosaik-elements-svelte/components/text": [
-      "MosaikText"
-    ],
     "@pixel-brewery/mosaik-elements-svelte/components/theming": [
       "MosaikTheme2"
     ],
@@ -4166,6 +4386,9 @@
     "@pixel-brewery/mosaik-elements-svelte/components/tick-bar": [
       "MosaikTickBar"
     ],
+    "@pixel-brewery/mosaik-elements-svelte/components/tile": [
+      "MosaikTile"
+    ],
     "@pixel-brewery/mosaik-elements-svelte/components/tile-list": [
       "MosaikTileList",
       "MosaikTileListItem"
@@ -4173,9 +4396,6 @@
     "@pixel-brewery/mosaik-elements-svelte/components/tile-manager": [
       "MosaikTileManager",
       "MosaikTileManagerTile"
-    ],
-    "@pixel-brewery/mosaik-elements-svelte/components/tile": [
-      "MosaikTile"
     ],
     "@pixel-brewery/mosaik-elements-svelte/components/time-box": [
       "MosaikTimebox"
@@ -4277,6 +4497,7 @@
       "BADGE_DEFAULT_PROPS",
       "BANNER_DEFAULT_PROPS",
       "BANNER_GROUP_DEFAULT_PROPS",
+      "BANNER_GROUP_INTL",
       "BANNER_HEADER_DEFAULT_PROPS",
       "BANNER_SUB_HEADER_DEFAULT_PROPS",
       "BEAM_DEFAULT_PROPS",
@@ -4318,9 +4539,11 @@
       "CARD_FOOTER_DEFAULT_PROPS",
       "CARD_HEADER_DEFAULT_PROPS",
       "CARD_STACK_DEFAULT_PROPS",
+      "CARD_STACK_INTL",
       "CARD_SUB_TITLE_DEFAULT_PROPS",
       "CARD_TITLE_DEFAULT_PROPS",
       "CAROUSEL_DEFAULT_PROPS",
+      "CAROUSEL_INTL",
       "CAROUSEL_ITEM_DEFAULT_PROPS",
       "CELL_DEFAULT_PROPS",
       "CELL_GROUP_DEFAULT_PROPS",
@@ -4353,14 +4576,21 @@
       "COLOR_BOX_DEFAULT_PROPS",
       "COLOR_BOX_INTL",
       "COLOR_EDITOR_ALPHA_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_ALPHA_SLIDER_INTL",
       "COLOR_EDITOR_AREA_DEFAULT_PROPS",
+      "COLOR_EDITOR_AREA_INTL",
       "COLOR_EDITOR_DEFAULT_PROPS",
       "COLOR_EDITOR_HUE_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_HUE_SLIDER_INTL",
       "COLOR_EDITOR_INPUTS_DEFAULT_PROPS",
+      "COLOR_EDITOR_INPUTS_INTL",
       "COLOR_EDITOR_INTL",
       "COLOR_EDITOR_PALETTE_DEFAULT_PROPS",
+      "COLOR_EDITOR_PALETTE_INTL",
       "COLOR_EDITOR_SHADE_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_SHADE_SLIDER_INTL",
       "COLOR_EDITOR_SWATCH_DEFAULT_PROPS",
+      "COLOR_EDITOR_SWATCH_INTL",
       "COLOR_PICKER_DEFAULT_PROPS",
       "COLOR_PICKER_INTL",
       "COLOR_SLIDER_DEFAULT_PROPS",
@@ -4443,8 +4673,11 @@
       "CookiesConsentComponent",
       "CursorEffectComponent",
       "DATA_LIST_DEFAULT_PROPS",
+      "DATA_LIST_INTL",
       "DATA_TABLE_DEFAULT_PROPS",
       "DATA_TABLE_INTL",
+      "DATA_TREE_DEFAULT_PROPS",
+      "DATA_TREE_INTL",
       "DATE_BOX_DEFAULT_PROPS",
       "DATE_BOX_INTL",
       "DATE_TIME_BOX_DEFAULT_PROPS",
@@ -4486,6 +4719,7 @@
       "DataListComponent",
       "DataTableColumnEditorToggleDirective",
       "DataTableComponent",
+      "DataTreeComponent",
       "DateBoxComponent",
       "DateTimeBoxComponent",
       "DesignerCanvasComponent",
@@ -4493,6 +4727,7 @@
       "DesignerConnectorComponent",
       "DesignerContentComponent",
       "DesignerFrameComponent",
+      "DetailRowDefDirective",
       "DialogActionsComponent",
       "DialogComponent",
       "DialogContentComponent",
@@ -4527,7 +4762,9 @@
       "EMPTY_STATE_DEFAULT_PROPS",
       "EPG_CHANNEL_DEFAULT_PROPS",
       "EPG_DEFAULT_PROPS",
+      "EPG_INTL",
       "EPG_PROGRAM_DEFAULT_PROPS",
+      "EPG_PROGRAM_INTL",
       "ERROR_DEFAULT_PROPS",
       "ERROR_STATE_DEFAULT_PROPS",
       "EXPANDABLE_DEFAULT_PROPS",
@@ -4535,6 +4772,7 @@
       "EXPANDER_GROUP_DEFAULT_PROPS",
       "EXPANDER_HEADER_DEFAULT_PROPS",
       "EXPANDER_SUB_HEADER_DEFAULT_PROPS",
+      "EditorCellDefDirective",
       "ElevationComponent",
       "EmojiComponent",
       "EmptyStateComponent",
@@ -4565,12 +4803,19 @@
       "FLOATING_TRIGGER_DEFAULT_PROPS",
       "FLOW_BOARD_COLUMN_COMPOSER_DEFAULT_PROPS",
       "FLOW_BOARD_COLUMN_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_GROUP_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_INTL",
       "FLOW_BOARD_COLUMN_ITEM_COMPOSER_DEFAULT_PROPS",
       "FLOW_BOARD_COLUMN_ITEM_DEFAULT_PROPS",
       "FLOW_BOARD_COLUMN_ITEM_GROUP_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_ITEM_GROUP_INTL",
+      "FLOW_BOARD_COLUMN_ITEM_INTL",
       "FLOW_BOARD_DEFAULT_PROPS",
+      "FLOW_BOARD_INTL",
+      "FLOW_BOARD_SWIMLANE_DEFAULT_PROPS",
       "FOCUS_RING_DEFAULT_PROPS",
       "FONT_EDITOR_DEFAULT_PROPS",
+      "FONT_EDITOR_INTL",
       "FOOTER_DEFAULT_PROPS",
       "FOOTER_ITEM_DEFAULT_PROPS",
       "FOOTER_ITEM_GROUP_DEFAULT_PROPS",
@@ -4589,10 +4834,12 @@
       "FloatingTriggerComponent",
       "FlowBoardColumnComponent",
       "FlowBoardColumnComposerComponent",
+      "FlowBoardColumnGroupComponent",
       "FlowBoardColumnItemComponent",
       "FlowBoardColumnItemComposerComponent",
       "FlowBoardColumnItemGroupComponent",
       "FlowBoardComponent",
+      "FlowBoardSwimlaneComponent",
       "FocusRingComponent",
       "FontEditorComponent",
       "FooterCellDefDirective",
@@ -4611,6 +4858,7 @@
       "GlobeComponent",
       "GridComponent",
       "GridItemComponent",
+      "GroupDefDirective",
       "HELMET_DEFAULT_PROPS",
       "HINT_DEFAULT_PROPS",
       "HeaderCellDefDirective",
@@ -4620,6 +4868,7 @@
       "ILLUSTRATION_DEFAULT_PROPS",
       "IMAGE_DEFAULT_PROPS",
       "INDICATOR_DEFAULT_PROPS",
+      "INDICATOR_INTL",
       "IconComponent",
       "IconDirective",
       "IconNameDirective",
@@ -4671,6 +4920,7 @@
       "MESSAGE_DEFAULT_PROPS",
       "METER_BAR_DEFAULT_PROPS",
       "METER_RING_DEFAULT_PROPS",
+      "MINIMAP_DEFAULT_PROPS",
       "MarqueeComponent",
       "MasonryComponent",
       "MentionComponent",
@@ -4683,6 +4933,7 @@
       "MessageContentComponent",
       "MeterBarComponent",
       "MeterRingComponent",
+      "MinimapComponent",
       "NUMBER_BOX_DEFAULT_PROPS",
       "NUMBER_BOX_INTL",
       "NUMBER_COUNTER_DEFAULT_PROPS",
@@ -4709,6 +4960,9 @@
       "PARTICLES_DEFAULT_PROPS",
       "PASSWORD_BOX_DEFAULT_PROPS",
       "PASSWORD_BOX_INTL",
+      "PASSWORD_STRENGTH_METER_DEFAULT_PROPS",
+      "PASSWORD_STRENGTH_METER_INTL",
+      "PASSWORD_STRENGTH_RULE_DEFAULT_PROPS",
       "PATTERN_DEFAULT_PROPS",
       "PERSONA_DEFAULT_PROPS",
       "PERSPECTIVE_DEFAULT_PROPS",
@@ -4743,6 +4997,8 @@
       "ParallaxComponent",
       "ParticlesComponent",
       "PasswordBoxComponent",
+      "PasswordStrengthMeterComponent",
+      "PasswordStrengthRuleComponent",
       "PatternComponent",
       "PersonaComponent",
       "PerspectiveComponent",
@@ -4799,6 +5055,7 @@
       "RippleDirective",
       "SCALE_DEFAULT_PROPS",
       "SCHEDULER_AGENDA_DATE_HEADER_DEFAULT_PROPS",
+      "SCHEDULER_BLOCK_DEFAULT_PROPS",
       "SCHEDULER_CELL_CONTENT_DEFAULT_PROPS",
       "SCHEDULER_DAY_HEADER_DEFAULT_PROPS",
       "SCHEDULER_DEFAULT_PROPS",
@@ -4808,12 +5065,15 @@
       "SCHEDULER_INTL",
       "SCHEDULER_RESOURCE_AREA_HEADER_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_COLUMN_HEADER_DEFAULT_PROPS",
+      "SCHEDULER_RESOURCE_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_GROUP_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_ROW_DEFAULT_PROPS",
       "SCHEDULER_SELECTION_TOOLBAR_DEFAULT_PROPS",
       "SCHEDULER_TIMELINE_HEADER_DEFAULT_PROPS",
       "SCHEDULER_TIME_LABEL_DEFAULT_PROPS",
       "SCHEDULER_VIEW_DEFAULT_PROPS",
+      "SCHEDULER_VIEW_OPTION_DEFAULT_PROPS",
+      "SCHEDULER_WORKING_HOURS_DEFAULT_PROPS",
       "SCROLL_DEFAULT_PROPS",
       "SCRUB_SLIDER_DEFAULT_PROPS",
       "SEARCH_BOX_DEFAULT_PROPS",
@@ -4852,11 +5112,13 @@
       "STICKY_DEFAULT_PROPS",
       "SUCCESS_STATE_DEFAULT_PROPS",
       "SUGGESTION_MENU_DEFAULT_PROPS",
+      "SUGGESTION_MENU_INTL",
       "SUMMARY_DEFAULT_PROPS",
       "SWIPE_DEFAULT_PROPS",
       "ScaleComponent",
       "ScaleDirective",
       "SchedulerAgendaDateHeaderComponent",
+      "SchedulerBlockComponent",
       "SchedulerCellContentComponent",
       "SchedulerComponent",
       "SchedulerDayHeaderComponent",
@@ -4865,12 +5127,15 @@
       "SchedulerHeaderComponent",
       "SchedulerResourceAreaHeaderComponent",
       "SchedulerResourceColumnHeaderComponent",
+      "SchedulerResourceComponent",
       "SchedulerResourceGroupComponent",
       "SchedulerResourceRowComponent",
       "SchedulerSelectionToolbarComponent",
       "SchedulerTimeLabelComponent",
       "SchedulerTimelineHeaderComponent",
       "SchedulerViewComponent",
+      "SchedulerViewOptionComponent",
+      "SchedulerWorkingHoursComponent",
       "ScrollComponent",
       "ScrubSliderComponent",
       "SearchBoxComponent",
@@ -4916,19 +5181,24 @@
       "TABLE_BODY_DEFAULT_PROPS",
       "TABLE_BODY_ROW_DEFAULT_PROPS",
       "TABLE_COLUMN_EDITOR_DEFAULT_PROPS",
-      "TABLE_COLUMN_EDITOR_INTL",
       "TABLE_DEFAULT_PROPS",
+      "TABLE_DETAIL_ROW_DEFAULT_PROPS",
       "TABLE_FOOTER_CELL_DEFAULT_PROPS",
       "TABLE_FOOTER_DEFAULT_PROPS",
       "TABLE_FOOTER_ROW_DEFAULT_PROPS",
+      "TABLE_GROUP_ROW_DEFAULT_PROPS",
       "TABLE_HEADER_CELL_DEFAULT_PROPS",
+      "TABLE_HEADER_CELL_INTL",
       "TABLE_HEADER_DEFAULT_PROPS",
       "TABLE_HEADER_ROW_DEFAULT_PROPS",
       "TABLE_INTL",
       "TAB_DEFAULT_PROPS",
+      "TAB_GROUP_ITEM_DEFAULT_PROPS",
       "TAB_ITEM_DEFAULT_PROPS",
       "TAB_PANEL_DEFAULT_PROPS",
       "TAB_STRIP_DEFAULT_PROPS",
+      "TAB_STRIP_GROUP_ITEM_DEFAULT_PROPS",
+      "TAB_STRIP_GROUP_ITEM_INTL",
       "TAB_STRIP_ITEM_DEFAULT_PROPS",
       "TEXT_BOX_DEFAULT_PROPS",
       "TEXT_BOX_INTL",
@@ -4944,7 +5214,9 @@
       "TILE_LIST_DEFAULT_PROPS",
       "TILE_LIST_ITEM_DEFAULT_PROPS",
       "TILE_MANAGER_DEFAULT_PROPS",
+      "TILE_MANAGER_INTL",
       "TILE_MANAGER_TILE_DEFAULT_PROPS",
+      "TILE_MANAGER_TILE_INTL",
       "TIMELINE_CONTENT_DEFAULT_PROPS",
       "TIMELINE_DEFAULT_PROPS",
       "TIMELINE_ITEM_DEFAULT_PROPS",
@@ -4963,23 +5235,29 @@
       "TOOLTIP_DEFAULT_PROPS",
       "TOUR_ANCHOR_DEFAULT_PROPS",
       "TOUR_DEFAULT_PROPS",
+      "TOUR_INTL",
       "TOUR_NAV_DEFAULT_PROPS",
       "TOUR_STEP_DEFAULT_PROPS",
       "TREE_DEFAULT_PROPS",
+      "TREE_INTL",
       "TREE_ITEM_DEFAULT_PROPS",
       "TabComponent",
+      "TabGroupItemComponent",
       "TabItemComponent",
       "TabPanelComponent",
       "TabStripComponent",
+      "TabStripGroupItemComponent",
       "TabStripItemComponent",
       "TableBodyCellComponent",
       "TableBodyComponent",
       "TableBodyRowComponent",
       "TableColumnEditorComponent",
       "TableComponent",
+      "TableDetailRowComponent",
       "TableFooterCellComponent",
       "TableFooterComponent",
       "TableFooterRowComponent",
+      "TableGroupRowComponent",
       "TableHeaderCellComponent",
       "TableHeaderComponent",
       "TableHeaderRowComponent",
@@ -5027,8 +5305,8 @@
       "VIRTUALIZE_DEFAULT_PROPS",
       "VOICE_RECORDER_CHAT_TOOL_DEFAULT_PROPS",
       "VOICE_RECORDER_CHAT_TOOL_INTL",
-      "Validators",
       "VideoComponent",
+      "VirtualItemContentDirective",
       "VirtualizeComponent",
       "VoiceRecorderChatToolComponent",
       "WALLET_CARD_DEFAULT_PROPS",
@@ -5087,10 +5365,6 @@
       "BADGE_DEFAULT_PROPS",
       "BadgeComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/banner-group": [
-      "BANNER_GROUP_DEFAULT_PROPS",
-      "BannerGroupComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/banner": [
       "BANNER_DEFAULT_PROPS",
       "BANNER_HEADER_DEFAULT_PROPS",
@@ -5098,6 +5372,11 @@
       "BannerComponent",
       "BannerHeaderComponent",
       "BannerSubHeaderComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/banner-group": [
+      "BANNER_GROUP_DEFAULT_PROPS",
+      "BANNER_GROUP_INTL",
+      "BannerGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/beam": [
       "BEAM_DEFAULT_PROPS",
@@ -5146,10 +5425,6 @@
       "CAMERA_DEFAULT_PROPS",
       "CameraComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/card-stack": [
-      "CARD_STACK_DEFAULT_PROPS",
-      "CardStackComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/card": [
       "CARD_ACTIONS_DEFAULT_PROPS",
       "CARD_CONTENT_DEFAULT_PROPS",
@@ -5166,8 +5441,14 @@
       "CardSubTitleComponent",
       "CardTitleComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/card-stack": [
+      "CARD_STACK_DEFAULT_PROPS",
+      "CARD_STACK_INTL",
+      "CardStackComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/carousel": [
       "CAROUSEL_DEFAULT_PROPS",
+      "CAROUSEL_INTL",
       "CAROUSEL_ITEM_DEFAULT_PROPS",
       "CarouselComponent",
       "CarouselItemComponent"
@@ -5179,10 +5460,45 @@
       "CellGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/chart": [
+      "CHART_ANNOTATION_DEFAULT_PROPS",
+      "CHART_COLOR_SCALE_DEFAULT_PROPS",
+      "CHART_DATA_LABELS_DEFAULT_PROPS",
+      "CHART_DECIMATION_DEFAULT_PROPS",
       "CHART_DEFAULT_PROPS",
-      "CHART_TOOLBOX_DEFAULT_PROPS",
+      "CHART_EXPORT_DEFAULT_PROPS",
+      "CHART_GRID_DEFAULT_PROPS",
+      "CHART_GROUP_DEFAULT_PROPS",
+      "CHART_INTL",
+      "CHART_LEGEND_DEFAULT_PROPS",
+      "CHART_NAVIGATOR_DEFAULT_PROPS",
+      "CHART_PATTERNS_DEFAULT_PROPS",
+      "CHART_REFERENCE_BAND_DEFAULT_PROPS",
+      "CHART_REFERENCE_LINE_DEFAULT_PROPS",
+      "CHART_SERIES_DEFAULT_PROPS",
+      "CHART_TOOLTIP_DEFAULT_PROPS",
+      "CHART_TRENDLINE_DEFAULT_PROPS",
+      "CHART_XAXIS_DEFAULT_PROPS",
+      "CHART_YAXIS_DEFAULT_PROPS",
+      "CHART_ZOOM_DEFAULT_PROPS",
+      "ChartAnnotationComponent",
+      "ChartColorScaleComponent",
       "ChartComponent",
-      "ChartToolboxComponent"
+      "ChartDataLabelsComponent",
+      "ChartDecimationComponent",
+      "ChartExportComponent",
+      "ChartGridComponent",
+      "ChartGroupComponent",
+      "ChartLegendComponent",
+      "ChartNavigatorComponent",
+      "ChartPatternsComponent",
+      "ChartReferenceBandComponent",
+      "ChartReferenceLineComponent",
+      "ChartSeriesComponent",
+      "ChartTooltipComponent",
+      "ChartTrendlineComponent",
+      "ChartXAxisComponent",
+      "ChartYAxisComponent",
+      "ChartZoomComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/chat": [
       "ATTACHMENT_CHAT_TOOL_DEFAULT_PROPS",
@@ -5231,16 +5547,16 @@
       "CHECKMARK_DEFAULT_PROPS",
       "CheckmarkComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/chip-box": [
-      "CHIP_BOX_DEFAULT_PROPS",
-      "CHIP_BOX_INTL",
-      "ChipBoxComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/chip": [
       "CHIP_DEFAULT_PROPS",
       "CHIP_GROUP_DEFAULT_PROPS",
       "ChipComponent",
       "ChipGroupComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/chip-box": [
+      "CHIP_BOX_DEFAULT_PROPS",
+      "CHIP_BOX_INTL",
+      "ChipBoxComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/choice": [
       "CHOICE_DEFAULT_PROPS",
@@ -5254,14 +5570,14 @@
       "CLICKABLE_DEFAULT_PROPS",
       "ClickableComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/code": [
+      "CODE_DEFAULT_PROPS",
+      "CodeComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/code-editor": [
       "CODE_EDITOR_DEFAULT_PROPS",
       "CODE_EDITOR_INTL",
       "CodeEditorComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/code": [
-      "CODE_DEFAULT_PROPS",
-      "CodeComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/color-area": [
       "COLOR_AREA_DEFAULT_PROPS",
@@ -5274,14 +5590,21 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/color-editor": [
       "COLOR_EDITOR_ALPHA_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_ALPHA_SLIDER_INTL",
       "COLOR_EDITOR_AREA_DEFAULT_PROPS",
+      "COLOR_EDITOR_AREA_INTL",
       "COLOR_EDITOR_DEFAULT_PROPS",
       "COLOR_EDITOR_HUE_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_HUE_SLIDER_INTL",
       "COLOR_EDITOR_INPUTS_DEFAULT_PROPS",
+      "COLOR_EDITOR_INPUTS_INTL",
       "COLOR_EDITOR_INTL",
       "COLOR_EDITOR_PALETTE_DEFAULT_PROPS",
+      "COLOR_EDITOR_PALETTE_INTL",
       "COLOR_EDITOR_SHADE_SLIDER_DEFAULT_PROPS",
+      "COLOR_EDITOR_SHADE_SLIDER_INTL",
       "COLOR_EDITOR_SWATCH_DEFAULT_PROPS",
+      "COLOR_EDITOR_SWATCH_INTL",
       "ColorEditorAlphaSliderComponent",
       "ColorEditorAreaComponent",
       "ColorEditorComponent",
@@ -5340,12 +5663,18 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/data-list": [
       "DATA_LIST_DEFAULT_PROPS",
+      "DATA_LIST_INTL",
       "DataListComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/data-table": [
       "DATA_TABLE_DEFAULT_PROPS",
       "DATA_TABLE_INTL",
       "DataTableComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/data-tree": [
+      "DATA_TREE_DEFAULT_PROPS",
+      "DATA_TREE_INTL",
+      "DataTreeComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/date-box": [
       "DATE_BOX_DEFAULT_PROPS",
@@ -5451,7 +5780,9 @@
     "@pixel-brewery/mosaik-elements-angular/components/electronic-program-guide": [
       "EPG_CHANNEL_DEFAULT_PROPS",
       "EPG_DEFAULT_PROPS",
+      "EPG_INTL",
       "EPG_PROGRAM_DEFAULT_PROPS",
+      "EPG_PROGRAM_INTL",
       "EpgChannelComponent",
       "EpgComponent",
       "EpgProgramComponent"
@@ -5468,13 +5799,13 @@
       "EMPTY_STATE_DEFAULT_PROPS",
       "EmptyStateComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/error-state": [
-      "ERROR_STATE_DEFAULT_PROPS",
-      "ErrorStateComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/error": [
       "ERROR_DEFAULT_PROPS",
       "ErrorComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/error-state": [
+      "ERROR_STATE_DEFAULT_PROPS",
+      "ErrorStateComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/expandable": [
       "EXPANDABLE_DEFAULT_PROPS",
@@ -5509,31 +5840,17 @@
       "FLIP_DEFAULT_PROPS",
       "FlipComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/floating-action-button": [
-      "FLOATING_ACTION_BUTTON_DEFAULT_PROPS",
-      "FLOATING_ACTION_BUTTON_GROUP_DEFAULT_PROPS",
-      "FloatingActionButtonComponent",
-      "FloatingActionButtonGroupComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/floating": [
       "FLOATING_DEFAULT_PROPS",
       "FLOATING_TRIGGER_DEFAULT_PROPS",
       "FloatingComponent",
       "FloatingTriggerComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/flow-board": [
-      "FLOW_BOARD_COLUMN_COMPOSER_DEFAULT_PROPS",
-      "FLOW_BOARD_COLUMN_DEFAULT_PROPS",
-      "FLOW_BOARD_COLUMN_ITEM_COMPOSER_DEFAULT_PROPS",
-      "FLOW_BOARD_COLUMN_ITEM_DEFAULT_PROPS",
-      "FLOW_BOARD_COLUMN_ITEM_GROUP_DEFAULT_PROPS",
-      "FLOW_BOARD_DEFAULT_PROPS",
-      "FlowBoardColumnComponent",
-      "FlowBoardColumnComposerComponent",
-      "FlowBoardColumnItemComponent",
-      "FlowBoardColumnItemComposerComponent",
-      "FlowBoardColumnItemGroupComponent",
-      "FlowBoardComponent"
+    "@pixel-brewery/mosaik-elements-angular/components/floating-action-button": [
+      "FLOATING_ACTION_BUTTON_DEFAULT_PROPS",
+      "FLOATING_ACTION_BUTTON_GROUP_DEFAULT_PROPS",
+      "FloatingActionButtonComponent",
+      "FloatingActionButtonGroupComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/flow": [
       "FLOW_CONTROLS_DEFAULT_PROPS",
@@ -5548,12 +5865,35 @@
       "FlowMinimapComponent",
       "FlowNodeComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/flow-board": [
+      "FLOW_BOARD_COLUMN_COMPOSER_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_GROUP_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_INTL",
+      "FLOW_BOARD_COLUMN_ITEM_COMPOSER_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_ITEM_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_ITEM_GROUP_DEFAULT_PROPS",
+      "FLOW_BOARD_COLUMN_ITEM_GROUP_INTL",
+      "FLOW_BOARD_COLUMN_ITEM_INTL",
+      "FLOW_BOARD_DEFAULT_PROPS",
+      "FLOW_BOARD_INTL",
+      "FLOW_BOARD_SWIMLANE_DEFAULT_PROPS",
+      "FlowBoardColumnComponent",
+      "FlowBoardColumnComposerComponent",
+      "FlowBoardColumnGroupComponent",
+      "FlowBoardColumnItemComponent",
+      "FlowBoardColumnItemComposerComponent",
+      "FlowBoardColumnItemGroupComponent",
+      "FlowBoardComponent",
+      "FlowBoardSwimlaneComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/focus-ring": [
       "FOCUS_RING_DEFAULT_PROPS",
       "FocusRingComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/font-editor": [
       "FONT_EDITOR_DEFAULT_PROPS",
+      "FONT_EDITOR_INTL",
       "FontEditorComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/footer": [
@@ -5644,6 +5984,7 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/indicator": [
       "INDICATOR_DEFAULT_PROPS",
+      "INDICATOR_INTL",
       "IndicatorComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/jumbotron": [
@@ -5706,16 +6047,16 @@
       "MenuItemComponent",
       "MenuItemGroupComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/message-box": [
-      "MESSAGE_BOX_DEFAULT_PROPS",
-      "MESSAGE_BOX_INTL",
-      "MessageBoxComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/message": [
       "MESSAGE_CONTENT_DEFAULT_PROPS",
       "MESSAGE_DEFAULT_PROPS",
       "MessageComponent",
       "MessageContentComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/message-box": [
+      "MESSAGE_BOX_DEFAULT_PROPS",
+      "MESSAGE_BOX_INTL",
+      "MessageBoxComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/meter-bar": [
       "METER_BAR_DEFAULT_PROPS",
@@ -5725,6 +6066,16 @@
       "METER_RING_DEFAULT_PROPS",
       "MeterRingComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/minimap": [
+      "MINIMAP_DEFAULT_PROPS",
+      "MinimapComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/number": [
+      "NUMBER_COUNTER_DEFAULT_PROPS",
+      "NUMBER_DEFAULT_PROPS",
+      "NumberComponent",
+      "NumberCounterComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/number-box": [
       "NUMBER_BOX_DEFAULT_PROPS",
       "NUMBER_BOX_INTL",
@@ -5733,12 +6084,6 @@
     "@pixel-brewery/mosaik-elements-angular/components/number-ticker": [
       "NUMBER_TICKER_DEFAULT_PROPS",
       "NumberTickerComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/number": [
-      "NUMBER_COUNTER_DEFAULT_PROPS",
-      "NUMBER_DEFAULT_PROPS",
-      "NumberComponent",
-      "NumberCounterComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/orbit": [
       "ORBIT_DEFAULT_PROPS",
@@ -5775,6 +6120,13 @@
       "PASSWORD_BOX_DEFAULT_PROPS",
       "PASSWORD_BOX_INTL",
       "PasswordBoxComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/password-strength-meter": [
+      "PASSWORD_STRENGTH_METER_DEFAULT_PROPS",
+      "PASSWORD_STRENGTH_METER_INTL",
+      "PASSWORD_STRENGTH_RULE_DEFAULT_PROPS",
+      "PasswordStrengthMeterComponent",
+      "PasswordStrengthRuleComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/pattern": [
       "PATTERN_DEFAULT_PROPS",
@@ -5872,6 +6224,10 @@
       "REPEAT_BUTTON_DEFAULT_PROPS",
       "RepeatButtonComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/resize": [
+      "RESIZE_DEFAULT_PROPS",
+      "ResizeComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/resize-adorner": [
       "RESIZE_ADORNER_DEFAULT_PROPS",
       "ResizeAdornerComponent"
@@ -5879,10 +6235,6 @@
     "@pixel-brewery/mosaik-elements-angular/components/resize-thumb": [
       "RESIZE_THUMB_DEFAULT_PROPS",
       "ResizeThumbComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/resize": [
-      "RESIZE_DEFAULT_PROPS",
-      "ResizeComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/reveal": [
       "REVEAL_DEFAULT_PROPS",
@@ -5896,6 +6248,7 @@
       "RICH_TEXT_BOX_DEFAULT_PROPS",
       "RICH_TEXT_BOX_INTL",
       "RICH_TEXT_BOX_TOOLBOX_DEFAULT_PROPS",
+      "RICH_TEXT_BOX_TOOLBOX_INTL",
       "RichTextBoxComponent",
       "RichTextBoxToolboxComponent"
     ],
@@ -5909,6 +6262,7 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/scheduler": [
       "SCHEDULER_AGENDA_DATE_HEADER_DEFAULT_PROPS",
+      "SCHEDULER_BLOCK_DEFAULT_PROPS",
       "SCHEDULER_CELL_CONTENT_DEFAULT_PROPS",
       "SCHEDULER_DAY_HEADER_DEFAULT_PROPS",
       "SCHEDULER_DEFAULT_PROPS",
@@ -5918,13 +6272,17 @@
       "SCHEDULER_INTL",
       "SCHEDULER_RESOURCE_AREA_HEADER_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_COLUMN_HEADER_DEFAULT_PROPS",
+      "SCHEDULER_RESOURCE_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_GROUP_DEFAULT_PROPS",
       "SCHEDULER_RESOURCE_ROW_DEFAULT_PROPS",
       "SCHEDULER_SELECTION_TOOLBAR_DEFAULT_PROPS",
       "SCHEDULER_TIMELINE_HEADER_DEFAULT_PROPS",
       "SCHEDULER_TIME_LABEL_DEFAULT_PROPS",
       "SCHEDULER_VIEW_DEFAULT_PROPS",
+      "SCHEDULER_VIEW_OPTION_DEFAULT_PROPS",
+      "SCHEDULER_WORKING_HOURS_DEFAULT_PROPS",
       "SchedulerAgendaDateHeaderComponent",
+      "SchedulerBlockComponent",
       "SchedulerCellContentComponent",
       "SchedulerComponent",
       "SchedulerDayHeaderComponent",
@@ -5933,12 +6291,15 @@
       "SchedulerHeaderComponent",
       "SchedulerResourceAreaHeaderComponent",
       "SchedulerResourceColumnHeaderComponent",
+      "SchedulerResourceComponent",
       "SchedulerResourceGroupComponent",
       "SchedulerResourceRowComponent",
       "SchedulerSelectionToolbarComponent",
       "SchedulerTimeLabelComponent",
       "SchedulerTimelineHeaderComponent",
-      "SchedulerViewComponent"
+      "SchedulerViewComponent",
+      "SchedulerViewOptionComponent",
+      "SchedulerWorkingHoursComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/scroll": [
       "SCROLL_DEFAULT_PROPS",
@@ -5952,6 +6313,12 @@
       "SEARCH_BOX_DEFAULT_PROPS",
       "SEARCH_BOX_INTL",
       "SearchBoxComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/segment": [
+      "SEGMENT_DEFAULT_PROPS",
+      "SEGMENT_ITEM_DEFAULT_PROPS",
+      "SegmentComponent",
+      "SegmentItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/segment-bar": [
       "SEGMENT_BAR_DEFAULT_PROPS",
@@ -5970,12 +6337,6 @@
       "SEGMENT_RING_ITEM_DEFAULT_PROPS",
       "SegmentRingComponent",
       "SegmentRingItemComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/segment": [
-      "SEGMENT_DEFAULT_PROPS",
-      "SEGMENT_ITEM_DEFAULT_PROPS",
-      "SegmentComponent",
-      "SegmentItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/select": [
       "SELECT_DEFAULT_PROPS",
@@ -6035,15 +6396,15 @@
       "SPLINE_DEFAULT_PROPS",
       "SplineComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/split-button": [
-      "SPLIT_BUTTON_DEFAULT_PROPS",
-      "SPLIT_BUTTON_INTL",
-      "SplitButtonComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/split": [
       "SPLIT_DEFAULT_PROPS",
       "SPLIT_INTL",
       "SplitComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/split-button": [
+      "SPLIT_BUTTON_DEFAULT_PROPS",
+      "SPLIT_BUTTON_INTL",
+      "SplitButtonComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/stack": [
       "STACK_DEFAULT_PROPS",
@@ -6071,31 +6432,38 @@
       "SWIPE_DEFAULT_PROPS",
       "SwipeComponent"
     ],
-    "@pixel-brewery/mosaik-elements-angular/components/tab-strip": [
-      "TAB_STRIP_DEFAULT_PROPS",
-      "TAB_STRIP_ITEM_DEFAULT_PROPS",
-      "TabStripComponent",
-      "TabStripItemComponent"
-    ],
     "@pixel-brewery/mosaik-elements-angular/components/tab": [
       "TAB_DEFAULT_PROPS",
+      "TAB_GROUP_ITEM_DEFAULT_PROPS",
       "TAB_ITEM_DEFAULT_PROPS",
       "TAB_PANEL_DEFAULT_PROPS",
       "TabComponent",
+      "TabGroupItemComponent",
       "TabItemComponent",
       "TabPanelComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/tab-strip": [
+      "TAB_STRIP_DEFAULT_PROPS",
+      "TAB_STRIP_GROUP_ITEM_DEFAULT_PROPS",
+      "TAB_STRIP_GROUP_ITEM_INTL",
+      "TAB_STRIP_ITEM_DEFAULT_PROPS",
+      "TabStripComponent",
+      "TabStripGroupItemComponent",
+      "TabStripItemComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/table": [
       "TABLE_BODY_CELL_DEFAULT_PROPS",
       "TABLE_BODY_DEFAULT_PROPS",
       "TABLE_BODY_ROW_DEFAULT_PROPS",
       "TABLE_COLUMN_EDITOR_DEFAULT_PROPS",
-      "TABLE_COLUMN_EDITOR_INTL",
       "TABLE_DEFAULT_PROPS",
+      "TABLE_DETAIL_ROW_DEFAULT_PROPS",
       "TABLE_FOOTER_CELL_DEFAULT_PROPS",
       "TABLE_FOOTER_DEFAULT_PROPS",
       "TABLE_FOOTER_ROW_DEFAULT_PROPS",
+      "TABLE_GROUP_ROW_DEFAULT_PROPS",
       "TABLE_HEADER_CELL_DEFAULT_PROPS",
+      "TABLE_HEADER_CELL_INTL",
       "TABLE_HEADER_DEFAULT_PROPS",
       "TABLE_HEADER_ROW_DEFAULT_PROPS",
       "TABLE_INTL",
@@ -6104,12 +6472,18 @@
       "TableBodyRowComponent",
       "TableColumnEditorComponent",
       "TableComponent",
+      "TableDetailRowComponent",
       "TableFooterCellComponent",
       "TableFooterComponent",
       "TableFooterRowComponent",
+      "TableGroupRowComponent",
       "TableHeaderCellComponent",
       "TableHeaderComponent",
       "TableHeaderRowComponent"
+    ],
+    "@pixel-brewery/mosaik-elements-angular/components/text": [
+      "TEXT_DEFAULT_PROPS",
+      "TextComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/text-box": [
       "TEXT_BOX_DEFAULT_PROPS",
@@ -6126,11 +6500,8 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/text-suggestions": [
       "SUGGESTION_MENU_DEFAULT_PROPS",
+      "SUGGESTION_MENU_INTL",
       "SuggestionMenuComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/text": [
-      "TEXT_DEFAULT_PROPS",
-      "TextComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/theming": [
       "THEME2_DEFAULT_PROPS",
@@ -6148,6 +6519,10 @@
       "TICK_BAR_DEFAULT_PROPS",
       "TickBarComponent"
     ],
+    "@pixel-brewery/mosaik-elements-angular/components/tile": [
+      "TILE_DEFAULT_PROPS",
+      "TileComponent"
+    ],
     "@pixel-brewery/mosaik-elements-angular/components/tile-list": [
       "TILE_LIST_DEFAULT_PROPS",
       "TILE_LIST_ITEM_DEFAULT_PROPS",
@@ -6156,13 +6531,11 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/tile-manager": [
       "TILE_MANAGER_DEFAULT_PROPS",
+      "TILE_MANAGER_INTL",
       "TILE_MANAGER_TILE_DEFAULT_PROPS",
+      "TILE_MANAGER_TILE_INTL",
       "TileManagerComponent",
       "TileManagerTileComponent"
-    ],
-    "@pixel-brewery/mosaik-elements-angular/components/tile": [
-      "TILE_DEFAULT_PROPS",
-      "TileComponent"
     ],
     "@pixel-brewery/mosaik-elements-angular/components/time-box": [
       "TIME_BOX_DEFAULT_PROPS",
@@ -6214,6 +6587,7 @@
     "@pixel-brewery/mosaik-elements-angular/components/tour": [
       "TOUR_ANCHOR_DEFAULT_PROPS",
       "TOUR_DEFAULT_PROPS",
+      "TOUR_INTL",
       "TOUR_NAV_DEFAULT_PROPS",
       "TOUR_STEP_DEFAULT_PROPS",
       "TourAnchorComponent",
@@ -6223,6 +6597,7 @@
     ],
     "@pixel-brewery/mosaik-elements-angular/components/tree": [
       "TREE_DEFAULT_PROPS",
+      "TREE_INTL",
       "TREE_ITEM_DEFAULT_PROPS",
       "TreeComponent",
       "TreeItemComponent"
@@ -6260,8 +6635,8 @@
     ]
   },
   "framework_source": {
-    "ref": "v0.1.185",
-    "commit": "6632ece0b8f200cb893056df29f3997e84986927",
+    "ref": "v0.1.204",
+    "commit": "e2608c184073648f86c1d1cacb410f8ec061ca6d",
     "paths": [
       "libs/mosaik-elements-react",
       "libs/mosaik-elements-vue",
