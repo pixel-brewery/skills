@@ -655,6 +655,9 @@ class _Context:
         self.sources: dict[Path, str] = {}
         self.selectors: dict[str, Path] = {}
         self.known_classes: frozenset[str] = frozenset()
+        # Every source is resolved and scanned once; later style imports only add new sources.
+        self._indexed: set[Path] = set()
+        self._classes: set[str] = set()
         for path in paths:
             self.load(path)
             for suffix in ('.css', '.scss'):
@@ -672,8 +675,8 @@ class _Context:
     def _index(self) -> None:
         # Resolve transitive local style imports before class evidence is used by
         # an earlier template; inspection order must not change the verdict.
-        pending = list(self.sources)
-        visited = set()
+        pending = [path for path in self.sources if path not in self._indexed]
+        visited = set(self._indexed)
         while pending:
             path = pending.pop()
             if path in visited:
@@ -696,15 +699,17 @@ class _Context:
                         if sibling.is_file():
                             self.load(sibling)
                             pending.append(sibling.resolve())
-        classes = set()
         for path, source in list(self.sources.items()):
+            if path in self._indexed:
+                continue
+            self._indexed.add(path)
             styles = source if path.suffix in {'.css', '.scss'} else '\n'.join(value for value, _ in _inline_styles(source))
-            classes.update(re.findall(r'\.([A-Za-z_][\w-]*)', _without_comments(styles)))
+            self._classes.update(re.findall(r'\.([A-Za-z_][\w-]*)', _without_comments(styles)))
             for match in re.finditer(r'\bselector\s*:\s*[\'"]([^\'"]+)[\'"]|@customElement\(\s*[\'"]([^\'"]+)', _without_comments(source, javascript=True)):
                 for selector in (match.group(1) or match.group(2)).split(','):
                     if re.fullmatch(r'[a-z][\w-]+', selector.strip()):
                         self.selectors[selector.strip()] = path
-        self.known_classes = frozenset(classes)
+        self.known_classes = frozenset(self._classes)
 
     def report(self, path: Path, source: str, offset: int, rule: str, message: str) -> None:
         self.result.findings.append(Issue(path, _line(source, offset), rule, message))
