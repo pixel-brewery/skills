@@ -5,25 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Install reusable Pixel Brewery Agent Skills for architecture, Mosaik design and technical writing.">
     <meta name="color-scheme" content="light">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
     <title>Pixel Brewery Skills</title>
+    <link rel="icon" type="image/png" sizes="128x128" href="assets/skills-icon.png">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="page">
       <header class="site-header">
-        <a class="brand" href="./">Pixel Brewery Skills</a>
+        <a class="brand" href="./">
+          <img src="assets/skills-icon.png" width="48" height="48" alt="">
+          <span>Pixel Brewery Skills</span>
+        </a>
         <a class="source-link" href="https://github.com/pixel-brewery/skills">View on GitHub <span aria-hidden="true">↗</span></a>
       </header>
 
       <main id="main">
         <section class="hero" aria-labelledby="title">
-          <h1 id="title">Reusable skills for your coding agent</h1>
-          <p class="lead">Give your agent shared guidance for software architecture, Mosaik interfaces and technical documentation. Install the skills your project uses through the Skills CLI.</p>
-          <div class="actions">
-            <a class="button primary" href="#install">Install a skill</a>
-            <a class="button" href="#catalog">Browse the skills</a>
+          <div class="hero-copy">
+            <h1 id="title">Reusable skills for your coding agent</h1>
+            <p class="lead">Give your agent shared guidance for software architecture, Mosaik interfaces and technical documentation. Install the skills your project uses through the Skills CLI.</p>
+            <div class="actions">
+              <a class="button primary" href="#install">Install a skill</a>
+              <a class="button" href="#catalog">Browse the skills</a>
+            </div>
           </div>
+          <img class="hero-art" src="assets/hero.webp" alt="" width="1820" height="700" fetchpriority="high">
         </section>
 
         <section class="section" id="catalog" aria-labelledby="catalog-title">
