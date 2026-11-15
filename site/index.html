@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Install reusable Pixel Brewery Agent Skills for architecture, Mosaik design and technical writing.">
+    <meta name="color-scheme" content="light">
+    <title>Pixel Brewery Skills</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="page">
+      <header class="site-header">
+        <a class="brand" href="./">Pixel Brewery Skills</a>
+        <a class="source-link" href="https://github.com/pixel-brewery/skills">View on GitHub <span aria-hidden="true">↗</span></a>
+      </header>
+
+      <main id="main">
+        <section class="hero" aria-labelledby="title">
+          <h1 id="title">Reusable skills for your coding agent</h1>
+          <p class="lead">Give your agent shared guidance for software architecture, Mosaik interfaces and technical documentation. Install the skills your project uses through the Skills CLI.</p>
+          <div class="actions">
+            <a class="button primary" href="#install">Install a skill</a>
+            <a class="button" href="#catalog">Browse the skills</a>
+          </div>
+        </section>
+
+        <section class="section" id="catalog" aria-labelledby="catalog-title">
+          <h2 id="catalog-title">Skills</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Architekt</h3>
+              <p>Guide repository structure, implementation, API contracts and testing. Compose the shared guidance with rules for your own project.</p>
+              <a href="https://github.com/pixel-brewery/skills/blob/main/skills/architect/SKILL.md">Read the Architekt skill</a>
+            </article>
+            <article class="card">
+              <h3>Designer</h3>
+              <p>Build and review Mosaik interfaces using the components, layouts and accessibility guidance that apply to your app.</p>
+              <a href="https://github.com/pixel-brewery/skills/blob/main/skills/designer/SKILL.md">Read the Designer skill</a>
+            </article>
+            <article class="card">
+              <h3>Technical Writer</h3>
+              <p>Maintain product handbooks, implementation contracts and customer-facing feature catalogs.</p>
+              <a href="https://github.com/pixel-brewery/skills/blob/main/skills/technical-writer/SKILL.md">Read the Technical Writer skill</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="install" aria-labelledby="install-title">
+          <h2 id="install-title">Install a skill</h2>
+          <p>Run this command in your repository to add Architekt to Codex.</p>
+          <pre tabindex="0"><code>npx skills add pixel-brewery/skills --skill architect --agent codex --copy --yes</code></pre>
+          <p>Use <code>designer</code> or <code>technical-writer</code> in place of <code>architect</code> to install another skill. To pin an exact version for your team, install a full commit SHA and commit the files and lockfile produced by the CLI.</p>
+          <a href="https://github.com/pixel-brewery/skills#architekt">Read the pinned installation and project setup guide</a>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <a href="https://github.com/pixel-brewery">Pixel Brewery</a>
+        <a href="https://agentskills.io/">Agent Skills specification</a>
+      </footer>
+    </div>
+  </body>
+</html>
