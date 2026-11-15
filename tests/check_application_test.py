@@ -238,6 +238,30 @@ class ApplicationChecks(unittest.TestCase):
         self.assertEqual(result.findings, [])
         self.assertIn(transitive.resolve(), result.files)
 
+    def test_each_source_is_indexed_once_however_many_style_imports_follow(self):
+        self.write('shared/_tokens.scss', '.layout {display:flex;gap:var(--mosaik-layout-space)}')
+        owners = []
+        for index in range(30):
+            self.write(f'v{index}/View.html', '<section class="layout"><mosaik-button label="Save"/></section>')
+            self.write(f'v{index}/View.scss', '@use "../shared/_tokens.scss";')
+            owners.append(self.write(f'v{index}/View.ts', "@Component({templateUrl:'./View.html',styleUrl:'./View.scss'}) export class View {}"))
+        functions = CHECKER['inspect_files'].__globals__
+        original = functions['_without_comments']
+        calls = []
+
+        def counted(source, **options):
+            calls.append(1)
+            return original(source, **options)
+
+        functions['_without_comments'] = counted
+        try:
+            result = CHECKER['inspect_files'](owners)
+        finally:
+            functions['_without_comments'] = original
+        self.assertEqual(result.findings, [])
+        # A rescan of every source per style import grew with the square of the file count.
+        self.assertLess(len(calls), 12 * len(result.files))
+
     def test_stylesheet_imports_and_html_links_are_followed(self):
         self.write('shared.css', '.panel {border-radius:var(--mosaik-layout-radius)}')
         stylesheet = self.write('View.css', '@import "./shared.css"; .layout {display:flex}')
