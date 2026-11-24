@@ -134,6 +134,13 @@ class ApplicationChecks(unittest.TestCase):
         self.assertIn('literal-typography', self.rules('<h1 style="font-weight:600;line-height:1.2">Heading</h1>'))
         self.assertIn('literal-color', self.rules('<p style="color:red">Text</p>'))
 
+    def test_scss_line_comments_do_not_hide_the_following_declarations(self):
+        # An apostrophe in a `//` comment must not open a string that swallows the next rule.
+        scss = "// Mosaik's popup body adds padding\nmosaik-popup { --popup-padding-top: 0px; }\n"
+        self.assertIn('component-token-override', self.rules(scss, 'View.scss'))
+        url = ".panel { background-image: url(https://example.test/a.png); color: #ef4444; }"
+        self.assertIn('literal-color', self.rules(url, 'View.scss'))
+
     def test_authored_layout_styles_are_checked_and_can_pass(self):
         source = '.layout {display:grid;grid-template-columns:1fr 12rem;gap:calc(var(--mosaik-layout-space)*2);padding:0;} h1 {font:var(--mosaik-typography-headline3)}'
         result = self.inspect(source, 'View.scss')
