@@ -118,8 +118,14 @@ def _blank(value: str) -> str:
     return ''.join('\n' if char == '\n' else ' ' for char in value)
 
 
-def _without_comments(source: str, *, javascript: bool = False) -> str:
-    """Preserve offsets while excluding comments; keep quoted source intact."""
+def _without_comments(source: str, *, javascript: bool = False, line_comments: bool = False) -> str:
+    """Preserve offsets while excluding comments; keep quoted source intact.
+
+    `//` starts a comment in JavaScript and in SCSS/Sass/Less (`line_comments`); without
+    stripping it there, an apostrophe in such a comment would open a phantom string that hides
+    the following declarations. A `//` directly after `:` (an unquoted `url(https://...)`) is
+    not a comment.
+    """
     result = list(source)
     i = 0
     while i < len(source):
@@ -135,7 +141,9 @@ def _without_comments(source: str, *, javascript: bool = False) -> str:
             end = len(source) if end < 0 else end + 2
             result[i:end] = _blank(source[i:end])
             i = end
-        elif javascript and source.startswith('//', i):
+        elif source.startswith('//', i) and (
+            javascript or (line_comments and (i == 0 or source[i - 1] != ':'))
+        ):
             end = source.find('\n', i + 2)
             end = len(source) if end < 0 else end
             result[i:end] = _blank(source[i:end])
@@ -382,7 +390,7 @@ def css_declarations(source: str):
 
 
 def inspect_css(source: str, path: Path, offset: int = 0, *, base: bool = False, illustration: bool = False) -> list[Issue]:
-    clean = _without_comments(source)
+    clean = _without_comments(source, line_comments=path.suffix in {'.scss', '.sass', '.less'})
     findings = []
     for match in re.finditer(r'#\{|\{\{|\$\{', clean):
         findings.append(Issue(path, _line(source, match.start()) + offset, 'unverified-style', 'Resolve interpolated CSS before claiming that its declarations satisfy the layout/token contract.'))
