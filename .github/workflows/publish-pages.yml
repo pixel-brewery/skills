@@ -7,6 +7,12 @@ on:
       - .github/workflows/publish-pages.yml
       - 'site/**'
   workflow_dispatch:
+    inputs:
+      expected_head_sha:
+        description: Exact dependency merge source
+        required: false
+        default: ""
+        type: string
 
 permissions: {}
 
@@ -29,6 +35,10 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - name: Require the requested merge source
+        env:
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+        run: test -z "$EXPECTED_HEAD_SHA" || test "$EXPECTED_HEAD_SHA" = "$GITHUB_SHA"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
