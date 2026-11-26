@@ -26,6 +26,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         if (!/^pixel-brewery\/[a-z0-9-]+$/u.test(configuration.repository) ||
             !Number.isSafeInteger(configuration.repositoryId) || configuration.repositoryId <= 0 ||
             !/^[a-z0-9-]+\.yml$/u.test(configuration.workflowFile) ||
+            !/^[a-f0-9]{64}$/u.test(configuration.reviewedCiSha256 ?? '') ||
             !Array.isArray(configuration.requiredJobs) || !configuration.requiredJobs.length)
             throw new Error('Invalid trusted Dependabot configuration.');
         return configuration;
@@ -217,70 +218,17 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
             (actor.login === 'github-actions[bot]' && actor.id === 41898282));
     }
 
-    function readOnlyWorkflow(text) {
-        if (!text || Buffer.byteLength(text) > 65_536 || /[\t\r\0]/u.test(text)) return false;
-        const withoutToken = text.replace(/\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}/gu, 'NATIVE_WORKFLOW_TOKEN');
-        if (/\bsecrets\b|(?:^|[\s,{])(?:&|\*)[a-zA-Z0-9_-]+|<<\s*:|:\s*![a-zA-Z]/imu.test(withoutToken)) return false;
-        const lines = text.split('\n');
-        const jobs = lines.findIndex((line) => /^jobs:\s*(?:#.*)?$/u.test(line));
-        if (jobs < 0) return false;
-        const firstJob = lines.slice(jobs + 1).find((line) => line.trim() && !line.trim().startsWith('#'));
-        const jobIndent = /^([ ]+)[a-zA-Z_][\w-]*:\s*(?:#.*)?$/u.exec(firstJob ?? '')?.[1].length;
-        if (!jobIndent) return false;
-        let root = 0;
-        let declarations = 0;
-        const jobsWithPermissions = new Set();
-        let currentJob;
-        const rootKeys = new Set();
-        for (let index = 0; index < lines.length; index++) {
-            const line = lines[index];
-            const indent = /^ */u.exec(line)?.[0].length ?? 0;
-            const trimmed = line.trim();
-            if (trimmed && !trimmed.startsWith('#') && (indent === 0 || (index > jobs && [jobIndent, jobIndent * 2].includes(indent)))) {
-                // Only ordinary mapping keys are in this small proof language.
-                // Escaped/complex YAML keys and reusable workflow inheritance need
-                // a real transitive parser/proof rather than a permissive guess.
-                const field = /^(?:([a-zA-Z_][\w-]*)|'([a-zA-Z_][\w-]*)'|"([a-zA-Z_][\w-]*)"):\s*(.*)$/u.exec(trimmed);
-                if (!field) return false;
-                const name = field[1] ?? field[2] ?? field[3];
-                if (indent === 0) { if (rootKeys.has(name)) return false; rootKeys.add(name); }
-                if (field[4].startsWith('{') && !(name === 'permissions' && /^\{\}\s*(?:#.*)?$/u.test(field[4]))) return false;
-                if (index > jobs && indent === jobIndent * 2 && ['uses', 'environment'].includes(name)) return false;
-            }
-            if (index > jobs) {
-                const key = /^([ ]+)([a-zA-Z_][\w-]*):\s*(?:#.*)?$/u.exec(line);
-                if (key?.[1].length === jobIndent) currentJob = key[2];
-            }
-            const permission = /^([ ]*)(?:permissions|'permissions'|"permissions"):\s*(.*?)\s*(?:#.*)?$/u.exec(line);
-            if (!permission) continue;
-            declarations++;
-            const indentation = permission[1].length;
-            if (indentation === 0) { if (++root !== 1) return false; }
-            else if (index <= jobs || indentation !== jobIndent * 2 || !currentJob || jobsWithPermissions.has(currentJob)) return false;
-            else jobsWithPermissions.add(currentJob);
-            const value = permission[2].replace(/\s*#.*$/u, '').trim();
-            if (value === '{}') continue;
-            if (value !== '') return false;
-            let count = 0;
-            const names = new Set();
-            for (let cursor = index + 1; cursor < lines.length; cursor++) {
-                const child = lines[cursor];
-                if (!child.trim() || child.trim().startsWith('#')) continue;
-                if ((/^ */u.exec(child)?.[0].length ?? 0) <= indentation) break;
-                const entry = /^([ ]+)(actions|attestations|checks|contents|deployments|discussions|id-token|issues|models|packages|pages|pull-requests|security-events|statuses):\s*(read|none)\s*(?:#.*)?$/u.exec(child);
-                if (!entry || names.has(entry[2])) return false;
-                names.add(entry[2]); count++;
-            }
-            if (!count) return false;
-        }
-        return root === 1 && declarations === (text.match(/\bpermissions['"]?\s*:/gu) ?? []).length;
-    }
-
     function pinInvariant(text) {
         return text.split('\n').map((line) => {
             const match = /^([ ]*(?:-\s+)?uses:\s+)([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*)@([a-f0-9]{40})(?:[ ]+#\s*v?\d+(?:\.\d+)*(?:[.+-][a-zA-Z0-9_.-]+)?)?[ ]*$/u.exec(line);
             return match ? `${match[1]}${match[2]}@PIN` : line;
         }).join('\n');
+    }
+
+    function isReadonlyPullRequestWorkflow(mainSource, pullRequestSource, reviewedCiSha256) {
+        if (typeof mainSource !== 'string' || typeof pullRequestSource !== 'string' || !/^[a-f0-9]{64}$/u.test(reviewedCiSha256 ?? '')) return false;
+        const reviewed = pinInvariant(mainSource);
+        return createHash('sha256').update(reviewed, 'utf8').digest('hex') === reviewedCiSha256 && reviewed === pinInvariant(pullRequestSource);
     }
 
     async function workflowSource(ref, path) {
@@ -290,7 +238,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         const bytes = Buffer.from(file.content, 'base64');
         if (!bytes.length || bytes.length > 65_536 || createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex') !== file.sha) return;
         const text = bytes.toString('utf8');
-        return readOnlyWorkflow(text) ? text : undefined;
+        return Buffer.from(text, 'utf8').equals(bytes) ? text : undefined;
     }
 
     async function sourceProof(pull, selected) {
@@ -311,7 +259,10 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
             !shaPattern.test(candidate.tree?.sha ?? '') || merge.tree?.sha !== candidate.tree.sha) return;
         const baseline = await workflowSource(M, selected.path);
         const proposed = await workflowSource(B, selected.path);
-        if (!baseline || !proposed || pinInvariant(baseline) !== pinInvariant(proposed)) return;
+        if (!baseline || !proposed) return;
+        // The attestation belongs to protected main after complete CI review.
+        // It is never learned from pull-request configuration or API metadata.
+        if (!isReadonlyPullRequestWorkflow(baseline, proposed, c.reviewedCiSha256)) return;
         return { M, B, C };
     }
 
@@ -354,7 +305,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
             associated.some((item) => item.number === pull.number && eligiblePull(item, c) && item.head.sha === pull.head.sha);
     }
 
-    async function verifiedRun(pull) {
+    async function verifiedRun(pull, authorize = false) {
         const c = await config();
         const prefix = `repos/${c.repository}`;
         const selected = await workflow(c.workflowFile);
@@ -364,6 +315,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         if (!run) return;
         if (run.status === 'completed' && run.conclusion === 'action_required') {
             if (!nativeActor(run.actor) || !nativeActor(run.triggering_actor)) return;
+            if (!authorize) return { approvalRequired: true, id: run.id, run_attempt: run.run_attempt };
             const current = await request('GET', `${prefix}/pulls/${pull.number}`);
             const fresh = await sourceProof(current, selected);
             if (!fresh || fresh.M !== proof.M || fresh.B !== proof.B || fresh.C !== proof.C || !(await uniqueAssociation(current))) return;
@@ -383,6 +335,16 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         if (!jobs.jobs.every((job) => remaining.delete(job.name) && job.run_id === run.id && job.head_sha === pull.head.sha && job.status === 'completed' && job.conclusion === 'success')) return;
         if (remaining.size) return;
         return { ...run, proof, selected };
+    }
+
+    async function authorize(number) {
+        const c = await config();
+        const pull = await request('GET', `repos/${c.repository}/pulls/${number}`);
+        if (!eligiblePull(pull, c) || pull.number !== number) return { status: 'skipped', reason: 'ineligible-pull-request' };
+        if (!(await dependencyOnly(pull, await pullFiles(pull)))) return { status: 'skipped', reason: 'non-dependency-change' };
+        if (!(await protectedMain())) return { status: 'skipped', reason: 'protection-required' };
+        const run = await verifiedRun(pull, true);
+        return run?.approval ? { status: 'approved', number, runId: run.id, attempt: run.run_attempt } : { status: 'waiting', reason: 'native-authorization-not-required' };
     }
 
     async function reconcile(number) {
@@ -419,7 +381,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         }
         if (!(await dependencyOnly(pull, await pullFiles(pull)))) return { status: 'skipped', reason: 'non-dependency-change' };
         const run = await verifiedRun(pull);
-        if (run?.approval) return { status: 'approved', number, runId: run.id, attempt: run.run_attempt };
+        if (run?.approvalRequired) return { status: 'approval-required', number, runId: run.id, attempt: run.run_attempt };
         if (!run) {
             await dispatch(c.workflowFile, pull.head.ref, pull.head.sha, 'expected_head_sha', true, pull);
             return { status: 'waiting', reason: 'verification-required' };
@@ -443,7 +405,8 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         return { status: 'merged', number, sha: merged.sha };
     }
 
-    async function runFromEnvironment() {
+    async function runFromEnvironment(mode = 'reconcile') {
+        if (!['reconcile', 'authorize'].includes(mode)) throw new Error('Unsupported Dependabot controller mode.');
         const c = await config();
         if (process.env.GITHUB_REPOSITORY !== c.repository || process.env.GITHUB_REPOSITORY_ID !== String(c.repositoryId) || process.env.GITHUB_REF !== 'refs/heads/main' ||
             !['workflow_run', 'schedule', 'workflow_dispatch'].includes(process.env.GITHUB_EVENT_NAME))
@@ -461,22 +424,24 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         const open = await request('GET', `repos/${c.repository}/pulls?state=open&base=main&per_page=100`);
         if (!Array.isArray(open)) throw new Error('Invalid open-pull inventory.');
         for (const pull of open) if (pull.user?.login === bot) numbers.add(pull.number);
-        const closed = await request('GET', `repos/${c.repository}/pulls?state=closed&base=main&sort=updated&direction=desc&per_page=20`);
-        if (!Array.isArray(closed)) throw new Error('Invalid continuation inventory.');
-        for (const pull of closed) {
-            if (pull.user?.login === bot && typeof pull.merged_at === 'string' && Date.parse(pull.merged_at) > Date.now() - 7 * 24 * 60 * 60 * 1000)
-                numbers.add(pull.number);
+        if (mode === 'reconcile') {
+            const closed = await request('GET', `repos/${c.repository}/pulls?state=closed&base=main&sort=updated&direction=desc&per_page=20`);
+            if (!Array.isArray(closed)) throw new Error('Invalid continuation inventory.');
+            for (const pull of closed) {
+                if (pull.user?.login === bot && typeof pull.merged_at === 'string' && Date.parse(pull.merged_at) > Date.now() - 7 * 24 * 60 * 60 * 1000)
+                    numbers.add(pull.number);
+            }
+            // Recover the current merge directly as well: unrelated issue activity
+            // cannot evict it from the recent-closed inventory used by scheduled retries.
+            const main = await request('GET', `repos/${c.repository}/branches/main`);
+            if (!shaPattern.test(main?.commit?.sha ?? '')) throw new Error('Invalid continuation source.');
+            const current = await request('GET', `repos/${c.repository}/commits/${main.commit.sha}/pulls?per_page=100`);
+            if (!Array.isArray(current)) throw new Error('Invalid current-merge association.');
+            for (const pull of current) if (mergedAssociation(pull, c, main.commit.sha)) numbers.add(pull.number);
         }
-        // Recover the current merge directly as well: unrelated issue activity
-        // cannot evict it from the recent-closed inventory used by scheduled retries.
-        const main = await request('GET', `repos/${c.repository}/branches/main`);
-        if (!shaPattern.test(main?.commit?.sha ?? '')) throw new Error('Invalid continuation source.');
-        const current = await request('GET', `repos/${c.repository}/commits/${main.commit.sha}/pulls?per_page=100`);
-        if (!Array.isArray(current)) throw new Error('Invalid current-merge association.');
-        for (const pull of current) if (mergedAssociation(pull, c, main.commit.sha)) numbers.add(pull.number);
         const results = [];
         for (const number of [...numbers].slice(0, 30)) {
-            try { results.push(await reconcile(number)); }
+            try { results.push(await (mode === 'authorize' ? authorize(number) : reconcile(number))); }
             catch (error) { results.push({ status: 'failed', number, reason: error instanceof Error ? error.message.slice(0, 512) : 'reconciliation-failed' }); }
         }
         console.log(JSON.stringify(results));
@@ -485,7 +450,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         return results;
     }
 
-    return { reconcile, runFromEnvironment };
+    return { reconcile, authorize, runFromEnvironment };
 }
 
 function requestGitHub(method, endpoint, body) {

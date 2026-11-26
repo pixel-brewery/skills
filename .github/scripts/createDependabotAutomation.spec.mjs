@@ -22,7 +22,7 @@ function sourceFile(text) {
     return { type: 'file', encoding: 'base64', content: bytes.toString('base64'), sha: createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex') };
 }
 const repo = { id: 123, full_name: 'pixel-brewery/example' };
-const configuration = { repository: repo.full_name, repositoryId: repo.id, workflowFile: 'ci.yml', workflowName: 'Verify', requiredJobs: ['verify'], postMergeWorkflows: [{ file: 'ci.yml' }] };
+const configuration = { repository: repo.full_name, repositoryId: repo.id, workflowFile: 'ci.yml', workflowName: 'Verify', requiredJobs: ['verify'], reviewedCiSha256: 'c8d21576a929f184ca7d10e1f604507f71dc4e2f5ae1778d69278565df3599c3', postMergeWorkflows: [{ file: 'ci.yml' }] };
 
 function fixture(change = {}) {
     const calls = [];
@@ -123,7 +123,7 @@ test('never repeats an already dispatched continuation', async () => {
 
 test('approves the real readonly native run without manufacturing branch-check proof', async () => {
     const f = fixture({ run: { conclusion: 'action_required' } });
-    assert.equal((await f.controller.reconcile(7)).status, 'approved');
+    assert.equal((await f.controller.authorize(7)).status, 'approved');
     assert(f.calls.some((call) => call.endpoint.endsWith('/actions/runs/22/approve')));
     assert(!f.calls.some((call) => call.endpoint.endsWith('/dispatches')));
     assert(!f.calls.some((call) => call.method === 'PUT' && call.endpoint.endsWith('/merge')));
@@ -273,7 +273,7 @@ test('allows only full SHA action-pin and version-comment edits to the approved 
     // Arrange
     const f = fixture({ run: { conclusion: 'action_required' }, ciSource: ciSource.replace('1'.repeat(40), '2'.repeat(40)).replace('# v1.0.0', '# v2.1.0') });
     // Act
-    const result = await f.controller.reconcile(7);
+    const result = await f.controller.authorize(7);
     // Assert
     assert.equal(result.status, 'approved');
     assert.equal(f.calls.filter((call) => call.method === 'POST' && call.endpoint.endsWith('/approve')).length, 1);
@@ -317,7 +317,7 @@ for (const [name, change] of [
     // Arrange
     const f = fixture({ ...change, run: { conclusion: 'action_required', ...change.run } });
     // Act
-    const result = await f.controller.reconcile(7);
+    const result = await f.controller.authorize(7);
     // Assert
     assert.notEqual(result.status, 'approved');
     assert(!f.calls.some((call) => call.method === 'POST' && call.endpoint.endsWith('/approve')));
@@ -327,9 +327,9 @@ for (const [name, change] of [
 test('accepts explicit read-only job scopes and only the native GITHUB_TOKEN alias', async () => {
     // Arrange
     const source = ciSource.replace('    runs-on:', '    permissions:\n      contents: read\n      checks: read\n    runs-on:').replace('      - run: npm test', '      - run: npm test\n        env:\n          TOKEN: ${{ secrets.GITHUB_TOKEN }}');
-    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
+    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source, configuration: { reviewedCiSha256: 'c17725d800c598f6e53f7141d3283d15843314c769f44ffaa7e449c5479aaf57' } });
     // Act and Assert
-    assert.equal((await f.controller.reconcile(7)).status, 'approved');
+    assert.equal((await f.controller.authorize(7)).status, 'approved');
 });
 
 test('rechecks live refs after the last run read before approval', async () => {
@@ -339,7 +339,7 @@ test('rechecks live refs after the last run read before approval', async () => {
         if (endpoint.endsWith('/actions/runs/22') && ++reads === 2) pull.head.sha = refreshedSha;
     } });
     // Act
-    const result = await f.controller.reconcile(7);
+    const result = await f.controller.authorize(7);
     // Assert
     assert.notEqual(result.status, 'approved');
     assert(!f.calls.some((call) => call.method === 'POST' && call.endpoint.endsWith('/approve')));
@@ -372,11 +372,11 @@ for (const [name, source] of [
     ['escaped permission key', ciSource.replace('    runs-on:', '    "\\x70ermissions": write-all\n    runs-on:')],
     ['explicit complex key', ciSource.replace('    runs-on:', '    ? permissions\n    : write-all\n    runs-on:')],
     ['escaped flow-map job', ciSource + '  second: { "\\x70ermissions": write-all }\n'],
-]) test(`refuses unproven ${name} even in the trusted baseline`, async () => {
+]) test(`refuses unreviewed ${name} even when both CI sources match`, async () => {
     // Arrange
     const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
     // Act
-    const result = await f.controller.reconcile(7);
+    const result = await f.controller.authorize(7);
     // Assert
     assert.notEqual(result.status, 'approved');
     assert(!f.calls.some((call) => call.method === 'POST' && call.endpoint.endsWith('/approve')));
@@ -395,9 +395,9 @@ test('accepts the actual maintained repository CI as a readonly source baseline'
         }
     }
     const source = await readFile(new URL('.github/workflows/' + policy.workflowFile, directory), 'utf8');
-    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
+    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source, configuration: { reviewedCiSha256: policy.reviewedCiSha256 } });
     // Act and Assert
-    assert.equal((await f.controller.reconcile(7)).status, 'approved');
+    assert.equal((await f.controller.authorize(7)).status, 'approved');
 });
 
 
@@ -483,7 +483,106 @@ test('rejects case-insensitive custom secret context names even in the trusted b
     const source = ciSource.replace('      - run: npm test', '      - run: npm test\n        env:\n          TOKEN: ${{ SECRETS.PUBLISH_TOKEN }}');
     const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
     // Act
-    await f.controller.reconcile(7);
+    await f.controller.authorize(7);
     // Assert
     assert(!f.calls.some((call) => call.method === 'POST'));
+});
+
+
+test('signals blocked native CI in the mutator without issuing an approval POST', async () => {
+    // Arrange
+    const f = fixture({ run: { conclusion: 'action_required' } });
+    // Act
+    const result = await f.controller.reconcile(7);
+    // Assert
+    assert.equal(result.status, 'approval-required');
+    assert(!f.calls.some((call) => call.method !== 'GET'));
+});
+
+test('the isolated authorizer performs only reads and the exact workflow approval', async () => {
+    // Arrange
+    const f = fixture({ run: { conclusion: 'action_required' } });
+    // Act
+    const result = await f.controller.authorize(7);
+    // Assert
+    assert.equal(result.status, 'approved');
+    assert.deepEqual(f.calls.filter((call) => call.method !== 'GET').map(({method,endpoint})=>({method,endpoint})), [{ method: 'POST', endpoint: `repos/${repo.full_name}/actions/runs/22/approve` }]);
+});
+
+test('accepts an explicitly reviewed immutable Remote CI baseline with ordinary keyring shell text', async () => {
+    // Arrange: review snapshot pixel-brewery/remote at 5c8021a; fixture is never executed.
+    const source = await readFile(new URL('./fixtures/remote-ci-5c8021a.yml', import.meta.url), 'utf8');
+    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source, configuration: { reviewedCiSha256: '3d7af28f276c93b42b6f9165ec84ebb4dec14824051292634d537b17cca4b499' } });
+    // Act and Assert
+    assert.equal((await f.controller.authorize(7)).status, 'approved');
+});
+
+for (const expression of [
+    '${{ toJSON(secrets) }}',
+    "${{ secrets['PUBLISH_TOKEN'] }}",
+    '${{ toJSON(SECRETS) }}',
+    "${{ format('}}', secrets.PUBLISH_TOKEN) }}",
+    "${{ format('a''}}b', SeCrEtS['PUBLISH_TOKEN']) }}",
+    '"${{ se\\u0063rets.PUBLISH_TOKEN }}"',
+    '"\\u0024{{ secrets.PUBLISH_TOKEN }}"',
+    '"$\\u007b{ secrets.PUBLISH_TOKEN }}"',
+    '"${{ se\\' + '\n' + 'crets.PUBLISH_TOKEN }}"',
+    '"$\\' + '\n' + '{{ secrets.PUBLISH_TOKEN }}"',
+    "'${{ format(''}}'', secrets.PUBLISH_TOKEN) }}'",
+]) test(`an unreviewed encoded or literal source cannot authorize CI: ${expression}`, async () => {
+    // Arrange: main and candidate normalize identically except an allowed pin update;
+    // their source still lacks the fixed trusted review attestation.
+    const source = ciSource.replace('npm test', 'echo ' + expression);
+    const proposed = source.replace('1'.repeat(40), '2'.repeat(40)).replace('# v1.0.0', '# v2.0.0');
+    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: proposed });
+    // Act
+    await f.controller.authorize(7);
+    // Assert
+    assert(!f.calls.some((call) => call.method !== 'GET'));
+});
+
+test('rejects an unreviewed benign baseline change without learning its digest', async () => {
+    // Arrange
+    const source = ciSource.replace('npm test', 'npm test --future-option');
+    const f = fixture({ run: { conclusion: 'action_required', reviewedCiSha256: 'f'.repeat(64) }, mainCiSource: source, ciSource: source });
+    // Act
+    await f.controller.authorize(7);
+    // Assert
+    assert(!f.calls.some((call) => call.method !== 'GET'));
+});
+
+test('requires a fixed well-formed review attestation in trusted configuration', async () => {
+    // Arrange
+    const f = fixture({ configuration: { reviewedCiSha256: undefined } });
+    // Act and Assert
+    await assert.rejects(f.controller.authorize(7), /Invalid trusted Dependabot configuration/u);
+    assert.equal(f.calls.length, 0);
+});
+
+
+test('the authorize workflow mode never runs mutator or continuation operations', async () => {
+    // Arrange
+    const f = fixture({ run: { conclusion: 'action_required' } });
+    const directory = await mkdtemp(join(tmpdir(), 'dependabot-authorize-'));
+    const eventPath = join(directory, 'event.json');
+    await writeFile(eventPath, '{}');
+    const values = { GITHUB_REPOSITORY: repo.full_name, GITHUB_REPOSITORY_ID: String(repo.id), GITHUB_REF: 'refs/heads/main', GITHUB_EVENT_NAME: 'schedule', GITHUB_EVENT_PATH: eventPath };
+    const previous = Object.fromEntries(Object.keys(values).map((key) => [key, process.env[key]]));
+    Object.assign(process.env, values);
+    const controller = createDependabotAutomation(configuration, { request: async (method, endpoint, body) => {
+        if (endpoint === `repos/${repo.full_name}/pulls?state=open&base=main&per_page=100`) return [{ number: 7, user: { login: 'dependabot[bot]' } }];
+        if (endpoint.startsWith(`repos/${repo.full_name}/pulls?state=closed`) || endpoint === `repos/${repo.full_name}/commits/${mainSha}/pulls?per_page=100`) throw new Error('The authorizer must not recover merge continuations.');
+        if (method !== 'GET' && !(method === 'POST' && endpoint.endsWith('/actions/runs/22/approve'))) throw new Error('The authorizer attempted a mutation outside workflow approval.');
+        return f.request(method, endpoint, body);
+    } });
+    try {
+        // Act
+        const result = await controller.runFromEnvironment('authorize');
+        // Assert
+        assert.equal(result[0].status, 'approved');
+        assert.equal(f.calls.filter((call) => call.method !== 'GET').length, 1);
+    } finally {
+        for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+        await rm(directory, { recursive: true, force: true });
+    }
 });
