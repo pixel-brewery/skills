@@ -144,6 +144,8 @@ class VersionTwoHashTests(unittest.TestCase):
             (self.root / directory).mkdir()
             (self.root / directory / 'ignored.bin').write_bytes(b'ignored')
         (self.root / 'metadata.json').write_text('{"installer": true}')
+        (self.root / 'nested/metadata.json').mkdir(parents=True)
+        (self.root / 'nested/metadata.json/ignored.bin').write_bytes(b'ignored')
         self.assertEqual('93c36952d8843b33e68ae970ebabcc03e1687c9bb0dd1ecaf357060318952f55', HELPER['folder_hash'](self.root, 2))
         (self.root / 'node_modules').mkdir()
         (self.root / 'node_modules/payload.js').write_text('included')

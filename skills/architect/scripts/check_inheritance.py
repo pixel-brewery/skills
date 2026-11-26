@@ -23,15 +23,17 @@ def folder_hash(folder: Path, version: int = 1) -> str:
             raise error
 
         for directory, folders, names in os.walk(folder, onerror=fail_walk):
-            folders[:] = [name for name in folders if name not in {'.git', '__pycache__', '__pypackages__'}]
+            folders[:] = [name for name in folders if name not in {'.git', '__pycache__', '__pypackages__', 'metadata.json'}]
             for name in names:
                 if name == 'metadata.json':
                     continue
                 path = Path(directory) / name
+                if not path.is_file():
+                    continue
                 content = path.read_bytes()
                 if b'\0' not in content:
                     content = content.replace(b'\r\n', b'\n')
-                files.append((path.relative_to(folder).as_posix().encode('utf-8'), content))
+                files.append((path.relative_to(folder).as_posix().replace('\\', '/').encode('utf-8'), content))
         digest = hashlib.sha256()
         for path, content in sorted(files, key=lambda item: item[0]):
             digest.update(path)
