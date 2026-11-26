@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -12,8 +14,37 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 
-def folder_hash(folder: Path) -> str:
-    """Use the Skills CLI's exact localeCompare ordering, including path names."""
+def folder_hash(folder: Path, version: int = 1) -> str:
+    """Match the selected Skills CLI lock format without rewriting its metadata."""
+    if version == 2:
+        files = []
+
+        def fail_walk(error):
+            raise error
+
+        for directory, folders, names in os.walk(folder, onerror=fail_walk):
+            folders[:] = [name for name in folders if name not in {'.git', '__pycache__', '__pypackages__', 'metadata.json'}]
+            for name in names:
+                if name == 'metadata.json':
+                    continue
+                path = Path(directory) / name
+                if not path.is_file():
+                    continue
+                content = path.read_bytes()
+                if b'\0' not in content:
+                    content = content.replace(b'\r\n', b'\n')
+                files.append((path.relative_to(folder).as_posix().replace('\\', '/').encode('utf-8'), content))
+        digest = hashlib.sha256()
+        for path, content in sorted(files, key=lambda item: item[0]):
+            digest.update(path)
+            digest.update(b'\0')
+            digest.update(str(len(content)).encode('ascii'))
+            digest.update(b'\0')
+            digest.update(content)
+        return digest.hexdigest()
+    if version != 1:
+        raise ValueError('Unsupported Skills CLI lock version.')
+    # Preserve the legacy CLI's localeCompare ordering and unframed hash exactly.
     script = """const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -97,8 +128,8 @@ def validate(root: Path, derived: str) -> list[str]:
     lock_path = root / 'skills-lock.json'
     try:
         lock = json.loads(lock_path.read_text(encoding='utf-8'))
-        if lock.get('version') != 1 or not isinstance(lock.get('skills'), dict):
-            return ['skills-lock.json must use the standard Skills CLI version-1 skills map.']
+        if not isinstance(lock, dict) or type(lock.get('version')) is not int or lock.get('version') not in (1, 2) or not isinstance(lock.get('skills'), dict):
+            return ['skills-lock.json must use a standard Skills CLI version-1 or version-2 skills map.']
         entry = lock['skills'].get('architect')
         if not isinstance(entry, dict):
             return ['Architect is missing from skills-lock.json; install it with the Skills CLI.']
@@ -108,6 +139,8 @@ def validate(root: Path, derived: str) -> list[str]:
             errors.append('Unexpected Architect skillPath in skills-lock.json.')
         if not re.fullmatch(r'[0-9a-f]{40}', str(entry.get('ref', ''))):
             errors.append('Architect must be pinned to a full 40-character Git commit in ref.')
+        if lock['version'] == 2 and 'commit' in entry and entry['commit'] != entry.get('ref'):
+            errors.append('Architect commit must match its immutable ref pin.')
         expected_hash = entry.get('computedHash', '')
         if not re.fullmatch(r'[0-9a-f]{64}', str(expected_hash)):
             errors.append('Architect requires a Skills CLI computedHash.')
@@ -115,7 +148,7 @@ def validate(root: Path, derived: str) -> list[str]:
             return errors + ['Installed Architect base is missing.']
         if any(p.is_symlink() for folder in (base, local) for p in [folder, *folder.rglob('*')]):
             return errors + ['Base and derived skills must be self-contained copies, not symlinks.']
-        if folder_hash(base) != expected_hash:
+        if folder_hash(base, lock['version']) != expected_hash:
             errors.append('Installed Architect content differs from skills-lock.json; reinstall the pinned source.')
         local_entry = local / 'SKILL.md'
         if not local_entry.is_file():

@@ -49,3 +49,5 @@ python3 .agents/skills/architect/scripts/check_inheritance.py --root . --derived
 ```
 
 It checks the immutable Git ref, Skills CLI content hash, explicit base dependency and local reference availability. Missing, changed or unpinned bases must be repaired before relying on the inherited guidance. Update the central source, deliberately install a reviewed commit through the Skills CLI, regenerate local client projections and rerun the check. Do not edit the installed base or copy peer repositories' common files over it.
+
+Both Skills CLI lock formats are supported: version 1 retains its legacy hash, while version 2 uses the CLI's normalized, length-framed hash. Validation never migrates or rewrites the lock. The repository still requires self-contained copies and an immutable full `ref`; a version-2 `commit`, when present, must match that pin.

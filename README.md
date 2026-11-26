@@ -41,7 +41,7 @@ In its body, explicitly read `[Architekt](../architect/SKILL.md)` first, then se
 python3 .agents/skills/architect/scripts/check_inheritance.py --root . --derived project-architect
 ```
 
-The validator uses Python 3 and Node.js (the same locale-aware content-hash ordering as the Skills CLI), without third-party Python dependencies or network access. It checks source, full commit pin, installed content, dependency declaration and relative Markdown links. It does not prove that an agent followed every instruction.
+The validator supports Skills CLI lock formats 1 and 2 without rewriting either format. Python 3 handles validation; Node.js preserves the legacy v1 hash ordering. Version 2 follows the [Skills CLI hash contract](https://github.com/vercel-labs/skills#lock-file-content-hash), including byte ordering, framed contents and text line-ending normalization. No third-party Python dependency or network access is required. Source, immutable pin, installed content, explicit derivation and relative links are checked; these checks do not prove that an agent followed every instruction.
 
 To update, choose a reviewed central commit, repeat the pinned `skills add`, regenerate client projections and rerun the check. A pinned install remains on that commit until deliberately updated. Keep changes to project policy in the derived skill; changes to shared foundations belong here.
 
