@@ -13,3 +13,5 @@ Merges made with the native workflow token do not trigger normal push workflows.
 If GitHub requires approval for a token-authored bot head, the controller dispatches the same read-only validation at the unchanged exact head. Ordinary queued or running PR verification is allowed to finish without duplicate dispatch. Every required job must still succeed.
 
 A later approval-blocked PR attempt is excluded from proof selection when an exact-head dispatch has completed successfully. A later ordinary failed or running verification still prevents merging.
+
+Reconciliation isolates failures by pull request: a conflicting or concurrently changed bot branch cannot prevent other eligible updates from being processed. The controller reports the failed PR numbers and remains failed after the batch, preserving visibility and scheduled retries. API diagnostics include only the operation, endpoint and HTTP status; response bodies and credentials are omitted.

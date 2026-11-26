@@ -1,6 +1,11 @@
+// #region Imports
 import assert from 'node:assert/strict';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { createDependabotAutomation } from './createDependabotAutomation.mjs';
+// #endregion
 
 const mainSha = 'a'.repeat(40);
 const headSha = 'b'.repeat(40);
@@ -54,7 +59,7 @@ function fixture(change = {}) {
         if (route.startsWith('contents/package.json')) return { encoding: 'base64', content: Buffer.from(JSON.stringify({ scripts: { test: route.includes(headSha) ? 'modified' : 'original' } })).toString('base64') };
         throw new Error('Unexpected test route: ' + method + ' ' + route);
     };
-    return { calls, controller: createDependabotAutomation({ ...configuration, ...change.configuration }, { request, wait: async () => {} }) };
+    return { calls, request, controller: createDependabotAutomation({ ...configuration, ...change.configuration }, { request, wait: async () => {} }) };
 }
 
 for (const event of ['pull_request', 'workflow_dispatch']) test(`merges exact-head ${event} proof including major updates and dispatches main verification`, async () => {
@@ -165,4 +170,32 @@ test('resumes a confirmed current merge without merging twice', async () => {
 test('rejects a truncated workflow patch', async () => {
     const f = fixture({ files: [{ filename: '.github/workflows/ci.yml', status: 'modified', patch: '- uses: actions/checkout@aaaa\n+ uses: actions/checkout@bbbb', additions: 10, deletions: 10 }] });
     assert.equal((await f.controller.reconcile(7)).reason, 'non-dependency-change');
+});
+
+test('reports one failed pull request after processing the remaining eligible updates', async () => {
+    // Arrange
+    const f = fixture();
+    const directory = await mkdtemp(join(tmpdir(), 'dependabot-reconciliation-'));
+    const eventPath = join(directory, 'event.json');
+    await writeFile(eventPath, '{}');
+    const values = { GITHUB_REPOSITORY: repo.full_name, GITHUB_EVENT_NAME: 'workflow_dispatch', GITHUB_EVENT_PATH: eventPath };
+    const previous = Object.fromEntries(Object.keys(values).map((key) => [key, process.env[key]]));
+    Object.assign(process.env, values);
+    const controller = createDependabotAutomation(configuration, { request: async (method, endpoint, body) => {
+        if (endpoint === `repos/${repo.full_name}/pulls?state=open&base=main&per_page=100`)
+            return [{ number: 8, user: { login: 'dependabot[bot]' } }, { number: 7, user: { login: 'dependabot[bot]' } }];
+        if (endpoint.startsWith(`repos/${repo.full_name}/pulls?state=closed`)) return [];
+        if (endpoint === `repos/${repo.full_name}/pulls/8`) throw new Error('Conflicted branch requires reconciliation.');
+        return f.request(method, endpoint, body);
+    } });
+    try {
+        // Act and Assert
+        await assert.rejects(controller.runFromEnvironment(), /failed for pull requests: 8/u);
+        assert(f.calls.some((call) => call.endpoint.endsWith('/pulls/7/merge')));
+    } finally {
+        for (const [key, value] of Object.entries(previous)) {
+            if (value === undefined) delete process.env[key]; else process.env[key] = value;
+        }
+        await rm(directory, { recursive: true, force: true });
+    }
 });
