@@ -253,8 +253,13 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
                 numbers.add(pull.number);
         }
         const results = [];
-        for (const number of [...numbers].slice(0, 30)) results.push(await reconcile(number));
+        for (const number of [...numbers].slice(0, 30)) {
+            try { results.push(await reconcile(number)); }
+            catch (error) { results.push({ status: 'failed', number, reason: error instanceof Error ? error.message.slice(0, 512) : 'reconciliation-failed' }); }
+        }
         console.log(JSON.stringify(results));
+        const failed = results.filter((result) => result.status === 'failed');
+        if (failed.length) throw new Error(`Dependabot reconciliation failed for pull requests: ${failed.map((result) => result.number).join(', ')}. Other pull requests were still processed.`);
         return results;
     }
 
@@ -271,7 +276,8 @@ function requestGitHub(method, endpoint, body) {
             maxBuffer: 8 * 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'],
         });
         return output.trim() ? JSON.parse(output) : undefined;
-    } catch {
-        throw new Error('Dependabot reconciliation stopped after a GitHub API failure.');
+    } catch (error) {
+        const status = String(error?.stderr ?? '').match(/\bHTTP (\d{3})\b/u)?.[1] ?? 'unknown';
+        throw new Error(`Dependabot GitHub request failed: ${method} ${endpoint} (HTTP ${status}).`);
     }
 }
