@@ -268,6 +268,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
 
 function requestGitHub(method, endpoint, body) {
     if (!process.env.GH_TOKEN) throw new Error('Missing workflow token.');
+    let status;
     try {
         const output = execFileSync('gh', ['api', '--hostname', 'github.com', '--method', method,
             '--header', 'Accept: application/vnd.github+json', '--header', 'X-GitHub-Api-Version: 2022-11-28',
@@ -277,7 +278,8 @@ function requestGitHub(method, endpoint, body) {
         });
         return output.trim() ? JSON.parse(output) : undefined;
     } catch (error) {
-        const status = String(error?.stderr ?? '').match(/\bHTTP (\d{3})\b/u)?.[1] ?? 'unknown';
-        throw new Error(`Dependabot GitHub request failed: ${method} ${endpoint} (HTTP ${status}).`);
+        status = String(error?.stderr ?? '').match(/\bHTTP (\d{3})\b/u)?.[1] ?? 'unknown';
     }
+    // Translate the command failure after discarding its raw response-bearing cause.
+    throw new Error(`Dependabot GitHub request failed: ${method} ${endpoint} (HTTP ${status}).`);
 }
