@@ -82,6 +82,19 @@ test('never repeats an already dispatched continuation', async () => {
     assert.equal(f.calls.filter((call) => call.endpoint.endsWith('/dispatches')).length, 0);
 });
 
+test('dispatches read-only verification for an unchanged approval-blocked head', async () => {
+    const f = fixture({ run: { conclusion: 'action_required' } });
+    assert.equal((await f.controller.reconcile(7)).reason, 'verification-required');
+    assert(f.calls.some((call) => call.endpoint.endsWith('/dispatches') && call.body.inputs.expected_head_sha === headSha));
+    assert(!f.calls.some((call) => call.endpoint.endsWith('/merge')));
+});
+
+test('waits for ordinary verification without creating a duplicate run', async () => {
+    const f = fixture({ run: { status: 'in_progress', conclusion: null } });
+    await f.controller.reconcile(7);
+    assert(!f.calls.some((call) => call.endpoint.endsWith('/dispatches')));
+});
+
 for (const [name, change] of [
     ['human author', { pull: { user: { login: 'maintainer', type: 'User' } } }],
     ['foreign repository', { pull: { head: { repo: { ...repo, id: 456 }, sha: headSha, ref: 'dependabot/x' } } }],

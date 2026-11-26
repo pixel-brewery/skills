@@ -9,3 +9,5 @@ A stale branch is refreshed with its expected head and receives a fresh, read-on
 Mosaik starter lockfiles retain their manifest's `latest` root specifications. The only automatic lockfile repair changes erroneous `*` Mosaik root entries back to `latest`; resolved package versions and integrity data remain unchanged. The repaired head must pass full verification before merging.
 
 Merges made with the native workflow token do not trigger normal push workflows. The controller explicitly requests source-bound main verification and, when affected, the existing Pages workflow, deduplicating prior dispatches. No package release is introduced.
+
+If GitHub requires approval for a token-authored bot head, the controller dispatches the same read-only validation at the unchanged exact head. Ordinary queued or running PR verification is allowed to finish without duplicate dispatch. Every required job must still succeed.
