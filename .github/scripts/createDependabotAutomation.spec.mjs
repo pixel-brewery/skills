@@ -13,6 +13,7 @@ const headSha = 'b'.repeat(40);
 const refreshedSha = 'c'.repeat(40);
 const mergeSha = 'd'.repeat(40);
 const testMergeSha = 'e'.repeat(40);
+const refreshedMergeSha = '9'.repeat(40);
 const treeSha = 'f'.repeat(40);
 const actor = { login: 'github-actions[bot]', type: 'Bot', id: 41898282 };
 const ciSource = `name: Verify\non:\n  pull_request:\npermissions:\n  contents: read\n  pull-requests: read\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@${'1'.repeat(40)} # v1.0.0\n      - run: npm test\n`;
@@ -47,7 +48,7 @@ function fixture(change = {}) {
         if (route === 'rules/branches/main') return change.rules ?? rules;
         if (route === 'branches/main') return { commit: { sha: merged ? mergeSha : mainSha } };
         if (route.startsWith('compare/')) return { behind_by: change.stale && !refreshed ? 1 : 0, merge_base_commit: { sha: mainSha } };
-        if (route === 'pulls/7/update-branch' && method === 'PUT') { assert.equal(body.expected_head_sha, headSha); refreshed = true; pull.head.sha = refreshedSha; return {}; }
+        if (route === 'pulls/7/update-branch' && method === 'PUT') { assert.equal(body.expected_head_sha, headSha); refreshed = true; pull.head.sha = refreshedSha; pull.merge_commit_sha = refreshedMergeSha; return {}; }
         if (route === 'actions/workflows/ci.yml') return { id: 11, path: '.github/workflows/ci.yml', name: 'Verify', state: 'active' };
         if (route.startsWith('actions/workflows/ci.yml/runs?')) {
             if (route.includes(refreshedSha) || route.includes(mergeSha)) return { workflow_runs: change.continuationRuns ?? [] };
@@ -56,8 +57,8 @@ function fixture(change = {}) {
         if (route === 'actions/workflows/ci.yml/dispatches') return {};
         if (/^actions\/runs\/\d+\/approve$/u.test(route) && method === 'POST') return {};
         if (route === `git/ref/heads/${pull.head.ref}`) return { object: { type: 'commit', sha: change.branchSha ?? pull.head.sha } };
-        if (route === 'git/ref/pull/7/merge') return { object: { type: 'commit', sha: change.mergeRefSha ?? testMergeSha } };
-        if (route === `git/commits/${testMergeSha}`) return { sha: testMergeSha, parents: change.parents ?? [{ sha: mainSha }, { sha: headSha }], tree: { sha: change.mergeTree ?? treeSha } };
+        if (route === 'git/ref/pull/7/merge') return { object: { type: 'commit', sha: change.mergeRefSha ?? pull.merge_commit_sha } };
+        if ([`git/commits/${testMergeSha}`, `git/commits/${refreshedMergeSha}`].includes(route)) return { sha: pull.merge_commit_sha, parents: change.parents ?? [{ sha: mainSha }, { sha: pull.head.sha }], tree: { sha: change.mergeTree ?? treeSha } };
         if (route.startsWith('contents/.github/workflows/ci.yml?')) {
             if (change.workflowBlob) return change.workflowBlob;
             return sourceFile(route.endsWith(mainSha) ? (change.mainCiSource ?? ciSource) : (change.ciSource ?? ciSource));
@@ -85,10 +86,10 @@ function fixture(change = {}) {
             const value = route.startsWith('contents/package.json') ? change.metadata.manifest : change.metadata.lock;
             return { encoding: 'base64', content: Buffer.from(JSON.stringify(value)).toString('base64') };
         }
-        if (route === `git/commits/${headSha}`) return { sha: headSha, tree: { sha: treeSha } };
+        if ([`git/commits/${headSha}`, `git/commits/${refreshedSha}`].includes(route)) return { sha: route.split('/').at(-1), tree: { sha: treeSha } };
         if (route === 'git/trees' && method === 'POST') return { sha: mainSha };
         if (route === 'git/commits' && method === 'POST') return { sha: refreshedSha };
-        if (route.startsWith('git/refs/heads/') && method === 'PATCH') { assert.equal(body.force, false); pull.head.sha = refreshedSha; return {}; }
+        if (route.startsWith('git/refs/heads/') && method === 'PATCH') { assert.equal(body.force, false); pull.head.sha = refreshedSha; pull.merge_commit_sha = refreshedMergeSha; return {}; }
         if (route.startsWith('contents/package.json')) return { encoding: 'base64', content: Buffer.from(JSON.stringify({ scripts: { test: route.includes(headSha) ? 'modified' : 'original' } })).toString('base64') };
         throw new Error('Unexpected test route: ' + method + ' ' + route);
     };
@@ -463,4 +464,26 @@ for (const state of ['queued', 'success', 'failure', 'cancelled', 'skipped']) te
     assert.equal(result.status, 'continued');
     assert(!f.calls.some((call) => call.method === 'POST' && call.endpoint.endsWith('/dispatches')));
     assert(!f.calls.some((call) => call.method === 'POST' && call.endpoint.includes('/rerun')));
+});
+
+
+for (const stale of [false, true]) test(`never dispatches unsafe identical main/candidate CI after branch refresh=${stale}`, async () => {
+    // Arrange
+    const source = ciSource.replace('contents: read', 'contents: write');
+    const f = fixture({ stale, run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
+    // Act
+    await f.controller.reconcile(7);
+    // Assert
+    assert(!f.calls.some((call) => call.method === 'POST' && (call.endpoint.endsWith('/approve') || call.endpoint.endsWith('/dispatches'))));
+    assert(!f.calls.some((call) => call.method === 'PUT' && call.endpoint.endsWith('/merge')));
+});
+
+test('rejects case-insensitive custom secret context names even in the trusted baseline', async () => {
+    // Arrange
+    const source = ciSource.replace('      - run: npm test', '      - run: npm test\n        env:\n          TOKEN: ${{ SECRETS.PUBLISH_TOKEN }}');
+    const f = fixture({ run: { conclusion: 'action_required' }, mainCiSource: source, ciSource: source });
+    // Act
+    await f.controller.reconcile(7);
+    // Assert
+    assert(!f.calls.some((call) => call.method === 'POST'));
 });

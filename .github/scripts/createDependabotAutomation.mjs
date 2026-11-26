@@ -76,6 +76,8 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         } else {
             const current = pull && await request('GET', `repos/${c.repository}/pulls/${pull.number}`);
             if (!eligiblePull(current, c) || current.head.ref !== ref || current.head.sha !== sha) return;
+            const proof = await sourceProof(current, selected);
+            if (!proof || !(await liveRefs(current, proof))) return;
         }
         await request('POST', `repos/${c.repository}/actions/workflows/${file}/dispatches`, { ref, inputs: { [inputKey]: sha } });
     }
@@ -218,7 +220,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
     function readOnlyWorkflow(text) {
         if (!text || Buffer.byteLength(text) > 65_536 || /[\t\r\0]/u.test(text)) return false;
         const withoutToken = text.replace(/\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}/gu, 'NATIVE_WORKFLOW_TOKEN');
-        if (/\bsecrets\b|(?:^|[\s,{])(?:&|\*)[a-zA-Z0-9_-]+|<<\s*:|:\s*![a-zA-Z]/mu.test(withoutToken)) return false;
+        if (/\bsecrets\b|(?:^|[\s,{])(?:&|\*)[a-zA-Z0-9_-]+|<<\s*:|:\s*![a-zA-Z]/imu.test(withoutToken)) return false;
         const lines = text.split('\n');
         const jobs = lines.findIndex((line) => /^jobs:\s*(?:#.*)?$/u.test(line));
         if (jobs < 0) return false;
