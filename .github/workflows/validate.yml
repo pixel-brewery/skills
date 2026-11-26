@@ -4,6 +4,12 @@ on:
   pull_request:
   merge_group:
   workflow_dispatch:
+    inputs:
+      expected_head_sha:
+        description: Exact source requested by the trusted dependency controller
+        required: false
+        default: ""
+        type: string
 permissions:
   contents: read
 jobs:
@@ -11,15 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "24"
+      - name: Require the requested dependency source
+        env:
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+        run: test -z "$EXPECTED_HEAD_SHA" || test "$EXPECTED_HEAD_SHA" = "$GITHUB_SHA"
+      - run: node --test .github/scripts/createDependabotAutomation.spec.mjs
       - run: python3 scripts/validate.py
       - run: python3 -m unittest discover -s tests -p '*_test.py'
       - run: node scripts/verify-public-content.mjs

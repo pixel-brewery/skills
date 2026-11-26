@@ -1,0 +1,22 @@
+{
+  "repository": "pixel-brewery/skills",
+  "repositoryId": 1440603148,
+  "workflowFile": "validate.yml",
+  "workflowName": "Validate skills",
+  "requiredJobs": [
+    "validate",
+    "Quality Gate"
+  ],
+  "postMergeWorkflows": [
+    {
+      "file": "validate.yml"
+    },
+    {
+      "file": "publish-pages.yml",
+      "paths": [
+        ".github/workflows/publish-pages.yml",
+        "site/"
+      ]
+    }
+  ]
+}
