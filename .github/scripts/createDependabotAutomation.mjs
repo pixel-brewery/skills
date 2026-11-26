@@ -1,5 +1,6 @@
 // #region Imports
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 // #endregion
@@ -13,6 +14,7 @@ const bot = 'dependabot[bot]';
  * @param suppliedConfiguration - Fixed repository, verification and continuation policy.
  * @param dependencies - Injected REST and waiting boundaries for deterministic tests.
  * @returns Reconciliation and workflow-environment entry points.
+ * @public
  */
 export function createDependabotAutomation(suppliedConfiguration, dependencies = {}) {
     const request = dependencies.request ?? requestGitHub;
@@ -29,26 +31,70 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         return configuration;
     }
 
-    async function dispatch(file, ref, sha, inputKey = 'expected_head_sha', onlyIfBlocked = false) {
+    async function workflow(file) {
         const c = await config();
-        const path = `repos/${c.repository}/actions/workflows/${file}`;
-        const runs = await request('GET', `${path}/runs?head_sha=${sha}&per_page=100`);
-        if (!Array.isArray(runs?.workflow_runs)) throw new Error('Unable to verify workflow continuation.');
-        if (runs.workflow_runs.some((run) => run.head_sha === sha && run.event === 'workflow_dispatch')) return;
-        if (onlyIfBlocked && runs.workflow_runs.some((run) => run.head_sha === sha && run.event === 'pull_request' &&
+        const value = await request('GET', `repos/${c.repository}/actions/workflows/${file}`);
+        if (!Number.isSafeInteger(value?.id) || value.id <= 0 || value.path !== `.github/workflows/${file}` ||
+            value.state !== 'active' || (file === c.workflowFile && value.name !== c.workflowName))
+            throw new Error('Unexpected workflow identity.');
+        return value;
+    }
+
+    async function workflowRuns(file, sha) {
+        const c = await config();
+        const runs = [];
+        for (let page = 1; page <= 10; page++) {
+            const response = await request('GET', `repos/${c.repository}/actions/workflows/${file}/runs?head_sha=${sha}&per_page=100${page === 1 ? '' : `&page=${page}`}`);
+            if (!Array.isArray(response?.workflow_runs) || response.workflow_runs.length > 100)
+                throw new Error('Invalid workflow inventory.');
+            runs.push(...response.workflow_runs);
+            if (response.workflow_runs.length < 100) return runs;
+        }
+        throw new Error('Workflow inventory exceeds its bound.');
+    }
+
+    function runIdentity(run, selected, c, branch, sha) {
+        return Number.isSafeInteger(run?.id) && run.id > 0 && Number.isSafeInteger(run.run_attempt) && run.run_attempt > 0 &&
+            run.workflow_id === selected.id && run.path === selected.path && run.name === selected.name &&
+            run.head_sha === sha && run.head_branch === branch && sameRepository(run.repository, c) && sameRepository(run.head_repository, c);
+    }
+
+    async function dispatch(file, ref, sha, inputKey = 'expected_head_sha', onlyIfBlocked = false, pull) {
+        const c = await config();
+        const selected = await workflow(file);
+        const runs = await workflowRuns(file, sha);
+        const matches = (run) => runIdentity(run, selected, c, ref, sha);
+        if (runs.some((run) => matches(run) && (run.event === 'workflow_dispatch' || (ref === 'main' && run.event === 'push')))) return;
+        if (onlyIfBlocked && runs.some((run) => matches(run) && run.event === 'pull_request' &&
             run.conclusion !== 'action_required' && run.status !== 'waiting')) return;
-        await request('POST', `${path}/dispatches`, { ref, inputs: { [inputKey]: sha } });
+        // Diagnostics are never branch-check proof. Every continuation remains bound
+        // to a fresh live PR or the confirmed current merge before its only POST.
+        if (ref === 'main') {
+            const current = pull && await request('GET', `repos/${c.repository}/pulls/${pull.number}`);
+            const main = await request('GET', `repos/${c.repository}/branches/main`);
+            if (!eligiblePull(current, c, false) || current.merge_commit_sha !== sha || main?.commit?.sha !== sha) return;
+        } else {
+            const current = pull && await request('GET', `repos/${c.repository}/pulls/${pull.number}`);
+            if (!eligiblePull(current, c) || current.head.ref !== ref || current.head.sha !== sha) return;
+            const proof = await sourceProof(current, selected);
+            if (!proof || !(await liveRefs(current, proof))) return;
+        }
+        await request('POST', `repos/${c.repository}/actions/workflows/${file}/dispatches`, { ref, inputs: { [inputKey]: sha } });
     }
 
     async function continueMerge(pull, files) {
         const c = await config();
         const root = `repos/${c.repository}`;
-        if (!shaPattern.test(pull.merge_commit_sha ?? '')) return { status: 'skipped', reason: 'missing-merge-sha' };
+        if (!eligiblePull(pull, c, false) || !shaPattern.test(pull.merge_commit_sha ?? '')) return { status: 'skipped', reason: 'missing-merge-sha' };
         const main = await request('GET', `${root}/branches/main`);
         if (main?.commit?.sha !== pull.merge_commit_sha) return { status: 'skipped', reason: 'superseded-merge' };
-        for (const workflow of c.postMergeWorkflows ?? []) {
-            if (!workflow.paths || files.some((file) => workflow.paths.some((prefix) => file.filename.startsWith(prefix))))
-                await dispatch(workflow.file, 'main', pull.merge_commit_sha, workflow.inputKey);
+        const associated = await request('GET', `${root}/commits/${pull.merge_commit_sha}/pulls?per_page=100`);
+        if (!Array.isArray(associated) || associated.filter((item) => mergedAssociation(item, c, pull.merge_commit_sha)).length !== 1 ||
+            !associated.some((item) => item.number === pull.number && mergedAssociation(item, c, pull.merge_commit_sha)))
+            return { status: 'skipped', reason: 'ambiguous-merge-association' };
+        for (const next of c.postMergeWorkflows ?? []) {
+            if (!next.paths || files.some((file) => next.paths.some((prefix) => file.filename.startsWith(prefix))))
+                await dispatch(next.file, 'main', pull.merge_commit_sha, next.inputKey, false, pull);
         }
         return { status: 'continued', sha: pull.merge_commit_sha };
     }
@@ -57,15 +103,27 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         return repo?.full_name === c.repository && repo.id === c.repositoryId;
     }
 
-    function eligiblePull(pull, c, open = true) {
+    function ownPull(pull, c) {
         return Number.isSafeInteger(pull?.number) && pull.number > 0 &&
-            pull.user?.login === bot && pull.user?.type === 'Bot' &&
+            pull.user?.login === bot && pull.user?.type === 'Bot' && pull.user.id === 49699333 &&
             sameRepository(pull.base?.repo, c) && sameRepository(pull.head?.repo, c) &&
             pull.base.ref === 'main' && pull.draft === false &&
             shaPattern.test(pull.head.sha ?? '') &&
             /^dependabot\/[a-zA-Z0-9_./-]+$/u.test(pull.head.ref ?? '') &&
-            !pull.head.ref.includes('..') && !pull.head.ref.includes('//') &&
-            (open ? pull.state === 'open' && pull.merged !== true && pull.merged_at == null : pull.state === 'closed' && pull.merged === true);
+            !pull.head.ref.includes('..') && !pull.head.ref.includes('//');
+    }
+
+    function eligiblePull(pull, c, open = true) {
+        return ownPull(pull, c) && (open ? pull.state === 'open' && pull.merged !== true && pull.merged_at == null :
+            pull.state === 'closed' && pull.merged === true && typeof pull.merged_at === 'string' && Number.isFinite(Date.parse(pull.merged_at)));
+    }
+
+    function mergedAssociation(pull, c, sha) {
+        // Commit-association responses intentionally omit the full Pull DTO's
+        // merged boolean. They select a candidate; GET /pulls/N still confirms
+        // merged === true before any continuation can be dispatched.
+        return ownPull(pull, c) && pull.state === 'closed' && pull.merged !== false && typeof pull.merged_at === 'string' &&
+            Number.isFinite(Date.parse(pull.merged_at)) && pull.merge_commit_sha === sha;
     }
 
     async function pullFiles(pull) {
@@ -154,28 +212,177 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
             (c.requiredChecks ?? c.requiredJobs).every((name) => rule.parameters.required_status_checks?.some((check) => check.context === name && check.integration_id === 15368)));
     }
 
+    function nativeActor(actor) {
+        return actor?.type === 'Bot' && ((actor.login === bot && actor.id === 49699333) ||
+            (actor.login === 'github-actions[bot]' && actor.id === 41898282));
+    }
+
+    function readOnlyWorkflow(text) {
+        if (!text || Buffer.byteLength(text) > 65_536 || /[\t\r\0]/u.test(text)) return false;
+        const withoutToken = text.replace(/\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}/gu, 'NATIVE_WORKFLOW_TOKEN');
+        if (/\bsecrets\b|(?:^|[\s,{])(?:&|\*)[a-zA-Z0-9_-]+|<<\s*:|:\s*![a-zA-Z]/imu.test(withoutToken)) return false;
+        const lines = text.split('\n');
+        const jobs = lines.findIndex((line) => /^jobs:\s*(?:#.*)?$/u.test(line));
+        if (jobs < 0) return false;
+        const firstJob = lines.slice(jobs + 1).find((line) => line.trim() && !line.trim().startsWith('#'));
+        const jobIndent = /^([ ]+)[a-zA-Z_][\w-]*:\s*(?:#.*)?$/u.exec(firstJob ?? '')?.[1].length;
+        if (!jobIndent) return false;
+        let root = 0;
+        let declarations = 0;
+        const jobsWithPermissions = new Set();
+        let currentJob;
+        const rootKeys = new Set();
+        for (let index = 0; index < lines.length; index++) {
+            const line = lines[index];
+            const indent = /^ */u.exec(line)?.[0].length ?? 0;
+            const trimmed = line.trim();
+            if (trimmed && !trimmed.startsWith('#') && (indent === 0 || (index > jobs && [jobIndent, jobIndent * 2].includes(indent)))) {
+                // Only ordinary mapping keys are in this small proof language.
+                // Escaped/complex YAML keys and reusable workflow inheritance need
+                // a real transitive parser/proof rather than a permissive guess.
+                const field = /^(?:([a-zA-Z_][\w-]*)|'([a-zA-Z_][\w-]*)'|"([a-zA-Z_][\w-]*)"):\s*(.*)$/u.exec(trimmed);
+                if (!field) return false;
+                const name = field[1] ?? field[2] ?? field[3];
+                if (indent === 0) { if (rootKeys.has(name)) return false; rootKeys.add(name); }
+                if (field[4].startsWith('{') && !(name === 'permissions' && /^\{\}\s*(?:#.*)?$/u.test(field[4]))) return false;
+                if (index > jobs && indent === jobIndent * 2 && ['uses', 'environment'].includes(name)) return false;
+            }
+            if (index > jobs) {
+                const key = /^([ ]+)([a-zA-Z_][\w-]*):\s*(?:#.*)?$/u.exec(line);
+                if (key?.[1].length === jobIndent) currentJob = key[2];
+            }
+            const permission = /^([ ]*)(?:permissions|'permissions'|"permissions"):\s*(.*?)\s*(?:#.*)?$/u.exec(line);
+            if (!permission) continue;
+            declarations++;
+            const indentation = permission[1].length;
+            if (indentation === 0) { if (++root !== 1) return false; }
+            else if (index <= jobs || indentation !== jobIndent * 2 || !currentJob || jobsWithPermissions.has(currentJob)) return false;
+            else jobsWithPermissions.add(currentJob);
+            const value = permission[2].replace(/\s*#.*$/u, '').trim();
+            if (value === '{}') continue;
+            if (value !== '') return false;
+            let count = 0;
+            const names = new Set();
+            for (let cursor = index + 1; cursor < lines.length; cursor++) {
+                const child = lines[cursor];
+                if (!child.trim() || child.trim().startsWith('#')) continue;
+                if ((/^ */u.exec(child)?.[0].length ?? 0) <= indentation) break;
+                const entry = /^([ ]+)(actions|attestations|checks|contents|deployments|discussions|id-token|issues|models|packages|pages|pull-requests|security-events|statuses):\s*(read|none)\s*(?:#.*)?$/u.exec(child);
+                if (!entry || names.has(entry[2])) return false;
+                names.add(entry[2]); count++;
+            }
+            if (!count) return false;
+        }
+        return root === 1 && declarations === (text.match(/\bpermissions['"]?\s*:/gu) ?? []).length;
+    }
+
+    function pinInvariant(text) {
+        return text.split('\n').map((line) => {
+            const match = /^([ ]*(?:-\s+)?uses:\s+)([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*)@([a-f0-9]{40})(?:[ ]+#\s*v?\d+(?:\.\d+)*(?:[.+-][a-zA-Z0-9_.-]+)?)?[ ]*$/u.exec(line);
+            return match ? `${match[1]}${match[2]}@PIN` : line;
+        }).join('\n');
+    }
+
+    async function workflowSource(ref, path) {
+        const c = await config();
+        const file = await request('GET', `repos/${c.repository}/contents/${path}?ref=${ref}`);
+        if (file?.type !== 'file' || file.encoding !== 'base64' || typeof file.content !== 'string' || !shaPattern.test(file.sha ?? '')) return;
+        const bytes = Buffer.from(file.content, 'base64');
+        if (!bytes.length || bytes.length > 65_536 || createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex') !== file.sha) return;
+        const text = bytes.toString('utf8');
+        return readOnlyWorkflow(text) ? text : undefined;
+    }
+
+    async function sourceProof(pull, selected) {
+        const c = await config();
+        if (!eligiblePull(pull, c)) return;
+        const prefix = `repos/${c.repository}`;
+        const main = await request('GET', `${prefix}/branches/main`);
+        const M = main?.commit?.sha, B = pull.head.sha, C = pull.merge_commit_sha;
+        if (!shaPattern.test(M ?? '') || pull.base.sha !== M || !shaPattern.test(C ?? '') || pull.mergeable !== true) return;
+        const branch = await request('GET', `${prefix}/git/ref/heads/${pull.head.ref}`);
+        const mergeRef = await request('GET', `${prefix}/git/ref/pull/${pull.number}/merge`);
+        if (branch?.object?.type !== 'commit' || branch.object.sha !== B || mergeRef?.object?.type !== 'commit' || mergeRef.object.sha !== C) return;
+        const comparison = await request('GET', `${prefix}/compare/${M}...${B}`);
+        if (comparison?.behind_by !== 0 || comparison.merge_base_commit?.sha !== M) return;
+        const candidate = await request('GET', `${prefix}/git/commits/${B}`);
+        const merge = await request('GET', `${prefix}/git/commits/${C}`);
+        if (candidate?.sha !== B || merge?.sha !== C || merge.parents?.length !== 2 || merge.parents[0].sha !== M || merge.parents[1].sha !== B ||
+            !shaPattern.test(candidate.tree?.sha ?? '') || merge.tree?.sha !== candidate.tree.sha) return;
+        const baseline = await workflowSource(M, selected.path);
+        const proposed = await workflowSource(B, selected.path);
+        if (!baseline || !proposed || pinInvariant(baseline) !== pinInvariant(proposed)) return;
+        return { M, B, C };
+    }
+
+    async function liveRefs(pull, proof) {
+        const c = await config();
+        const prefix = `repos/${c.repository}`;
+        const current = await request('GET', `${prefix}/pulls/${pull.number}`);
+        if (!eligiblePull(current, c) || current.base.sha !== proof.M || current.head.sha !== proof.B || current.head.ref !== pull.head.ref ||
+            current.merge_commit_sha !== proof.C || current.mergeable !== true) return false;
+        const main = await request('GET', `${prefix}/branches/main`);
+        const branch = await request('GET', `${prefix}/git/ref/heads/${current.head.ref}`);
+        const merge = await request('GET', `${prefix}/git/ref/pull/${current.number}/merge`);
+        return main?.commit?.sha === proof.M && branch?.object?.type === 'commit' && branch.object.sha === proof.B &&
+            merge?.object?.type === 'commit' && merge.object.sha === proof.C;
+    }
+
+    function nativeRun(run, selected, pull, c) {
+        if (!Number.isSafeInteger(run?.actor?.id) || run.actor.id <= 0 || typeof run.actor.login !== 'string' || !['Bot', 'User'].includes(run.actor.type) ||
+            !runIdentity(run, selected, c, pull.head.ref, pull.head.sha) || run.event !== 'pull_request' || !Array.isArray(run.pull_requests) || run.pull_requests.length !== 1) return false;
+        const linked = run.pull_requests[0];
+        return linked.number === pull.number && linked.base?.ref === 'main' && linked.base.sha === pull.base.sha && linked.base.repo?.id === c.repositoryId &&
+            linked.head?.sha === pull.head.sha && linked.head.ref === pull.head.ref && linked.head.repo?.id === c.repositoryId;
+    }
+
+    async function selectedNativeRun(pull, selected) {
+        const c = await config();
+        const runs = (await workflowRuns(c.workflowFile, pull.head.sha)).filter((run) => nativeRun(run, selected, pull, c)).sort((a, b) => b.id - a.id);
+        if (!runs.length) return;
+        // Approval updates the attempt on the same run ID. A later diagnostic
+        // dispatch cannot shadow this native run, and a stale list attempt cannot win.
+        const current = await request('GET', `repos/${c.repository}/actions/runs/${runs[0].id}`);
+        if (current?.id !== runs[0].id || !nativeRun(current, selected, pull, c)) return;
+        return current;
+    }
+
+    async function uniqueAssociation(pull) {
+        const c = await config();
+        const associated = await request('GET', `repos/${c.repository}/commits/${pull.head.sha}/pulls?per_page=100`);
+        return Array.isArray(associated) && associated.filter((item) => eligiblePull(item, c) && item.head.sha === pull.head.sha).length === 1 &&
+            associated.some((item) => item.number === pull.number && eligiblePull(item, c) && item.head.sha === pull.head.sha);
+    }
+
     async function verifiedRun(pull) {
         const c = await config();
         const prefix = `repos/${c.repository}`;
-        const workflow = await request('GET', `${prefix}/actions/workflows/${c.workflowFile}`);
-        if (workflow?.name !== c.workflowName || workflow?.path !== `.github/workflows/${c.workflowFile}`) return;
-        const response = await request('GET', `${prefix}/actions/workflows/${c.workflowFile}/runs?head_sha=${pull.head.sha}&per_page=100`);
-        if (!Array.isArray(response?.workflow_runs)) throw new Error('Invalid verification inventory.');
-        const runs = response.workflow_runs.filter((run) => run.workflow_id === workflow.id &&
-            ['pull_request', 'workflow_dispatch'].includes(run.event) && run.head_sha === pull.head.sha && run.head_branch === pull.head.ref &&
-            !(run.event === 'pull_request' && (run.conclusion === 'action_required' || run.status === 'waiting')) &&
-            sameRepository(run.repository, c) && sameRepository(run.head_repository, c)).sort((a, b) => b.id - a.id);
-        const run = runs[0];
-        if (!run || run.status !== 'completed' || run.conclusion !== 'success' || !Number.isSafeInteger(run.run_attempt)) return;
-        const associated = await request('GET', `${prefix}/commits/${run.head_sha}/pulls?per_page=100`);
-        if (!Array.isArray(associated) || associated.filter((item) => eligiblePull(item, c) && item.head.sha === run.head_sha).length !== 1 ||
-            !associated.some((item) => item.number === pull.number && eligiblePull(item, c))) return;
+        const selected = await workflow(c.workflowFile);
+        const proof = await sourceProof(pull, selected);
+        if (!proof || !(await uniqueAssociation(pull))) return;
+        const run = await selectedNativeRun(pull, selected);
+        if (!run) return;
+        if (run.status === 'completed' && run.conclusion === 'action_required') {
+            if (!nativeActor(run.actor) || !nativeActor(run.triggering_actor)) return;
+            const current = await request('GET', `${prefix}/pulls/${pull.number}`);
+            const fresh = await sourceProof(current, selected);
+            if (!fresh || fresh.M !== proof.M || fresh.B !== proof.B || fresh.C !== proof.C || !(await uniqueAssociation(current))) return;
+            const latest = await selectedNativeRun(current, selected);
+            if (!latest || latest.id !== run.id || latest.run_attempt !== run.run_attempt || latest.status !== 'completed' || latest.conclusion !== 'action_required' ||
+                !nativeActor(latest.actor) || !nativeActor(latest.triggering_actor)) return;
+            if (!(await protectedMain()) || !(await liveRefs(current, proof))) return;
+            // The run is real, read-only and still tied to these exact live refs.
+            // GitHub's normal required checks, not this approval, decide the merge.
+            await request('POST', `${prefix}/actions/runs/${latest.id}/approve`);
+            return { approval: true, id: latest.id, run_attempt: latest.run_attempt };
+        }
+        if (run.status !== 'completed' || run.conclusion !== 'success') return;
         const jobs = await request('GET', `${prefix}/actions/runs/${run.id}/attempts/${run.run_attempt}/jobs?per_page=100`);
         if (jobs?.total_count !== c.requiredJobs.length || !Array.isArray(jobs.jobs) || jobs.jobs.length !== c.requiredJobs.length) return;
         const remaining = new Set(c.requiredJobs);
-        if (!jobs.jobs.every((job) => remaining.delete(job.name) && job.run_id === run.id && job.status === 'completed' && job.conclusion === 'success')) return;
+        if (!jobs.jobs.every((job) => remaining.delete(job.name) && job.run_id === run.id && job.head_sha === pull.head.sha && job.status === 'completed' && job.conclusion === 'success')) return;
         if (remaining.size) return;
-        return run;
+        return { ...run, proof, selected };
     }
 
     async function reconcile(number) {
@@ -183,7 +390,10 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         const prefix = `repos/${c.repository}`;
         let pull = await request('GET', `${prefix}/pulls/${number}`);
         const files = await pullFiles(pull);
-        if (eligiblePull(pull, c, false)) return continueMerge(pull, files);
+        if (eligiblePull(pull, c, false)) {
+            if (!(await dependencyOnly(pull, files))) return { status: 'skipped', reason: 'non-dependency-change' };
+            return continueMerge(pull, files);
+        }
         if (!eligiblePull(pull, c)) return { status: 'skipped', reason: 'ineligible-pull-request' };
         if (!(await dependencyOnly(pull, files))) return { status: 'skipped', reason: 'non-dependency-change' };
         if (!(await protectedMain())) return { status: 'skipped', reason: 'protection-required' };
@@ -204,22 +414,26 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         pull = await normalizeRoot(pull, files);
         if (!eligiblePull(pull, c)) return { status: 'skipped', reason: 'pull-request-changed' };
         if (pull.head.sha !== originalHead) {
-            await dispatch(c.workflowFile, pull.head.ref, pull.head.sha);
+            await dispatch(c.workflowFile, pull.head.ref, pull.head.sha, 'expected_head_sha', false, pull);
             return { status: 'updated', head: pull.head.sha };
         }
+        if (!(await dependencyOnly(pull, await pullFiles(pull)))) return { status: 'skipped', reason: 'non-dependency-change' };
         const run = await verifiedRun(pull);
+        if (run?.approval) return { status: 'approved', number, runId: run.id, attempt: run.run_attempt };
         if (!run) {
-            await dispatch(c.workflowFile, pull.head.ref, pull.head.sha, 'expected_head_sha', true);
+            await dispatch(c.workflowFile, pull.head.ref, pull.head.sha, 'expected_head_sha', true, pull);
             return { status: 'waiting', reason: 'verification-required' };
         }
         const currentPull = await request('GET', `${prefix}/pulls/${number}`);
-        const currentRun = await request('GET', `${prefix}/actions/runs/${run.id}`);
+        const currentRun = await selectedNativeRun(currentPull, run.selected);
+        const freshProof = await sourceProof(currentPull, run.selected);
         main = await request('GET', `${prefix}/branches/main`);
         comparison = await request('GET', `${prefix}/compare/${main.commit.sha}...${pull.head.sha}`);
-        if (!eligiblePull(currentPull, c) || currentPull.head.sha !== pull.head.sha ||
-            currentRun?.head_sha !== pull.head.sha || currentRun.head_branch !== pull.head.ref || currentRun.workflow_id !== run.workflow_id || currentRun.run_attempt !== run.run_attempt ||
+        if (!(await protectedMain()) || !(await uniqueAssociation(currentPull)) || !eligiblePull(currentPull, c) || currentPull.head.sha !== pull.head.sha ||
+            !freshProof || freshProof.M !== run.proof.M || freshProof.B !== run.proof.B || freshProof.C !== run.proof.C ||
+            currentRun?.id !== run.id || currentRun.head_sha !== pull.head.sha || currentRun.head_branch !== pull.head.ref || currentRun.workflow_id !== run.workflow_id || currentRun.run_attempt !== run.run_attempt ||
             currentRun.status !== 'completed' || currentRun.conclusion !== 'success' ||
-            comparison?.behind_by !== 0 || comparison?.merge_base_commit?.sha !== main.commit.sha)
+            comparison?.behind_by !== 0 || comparison?.merge_base_commit?.sha !== main.commit.sha || !(await liveRefs(currentPull, run.proof)))
             return { status: 'skipped', reason: 'verification-changed' };
         const merged = await request('PUT', `${prefix}/pulls/${number}/merge`, { sha: pull.head.sha, merge_method: 'squash' });
         if (merged?.merged !== true || !shaPattern.test(merged.sha ?? '')) throw new Error('GitHub did not confirm the dependency merge.');
@@ -231,7 +445,8 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
 
     async function runFromEnvironment() {
         const c = await config();
-        if (process.env.GITHUB_REPOSITORY !== c.repository || !['workflow_run', 'schedule', 'workflow_dispatch'].includes(process.env.GITHUB_EVENT_NAME))
+        if (process.env.GITHUB_REPOSITORY !== c.repository || process.env.GITHUB_REPOSITORY_ID !== String(c.repositoryId) || process.env.GITHUB_REF !== 'refs/heads/main' ||
+            !['workflow_run', 'schedule', 'workflow_dispatch'].includes(process.env.GITHUB_EVENT_NAME))
             throw new Error('Unsupported Dependabot controller context.');
         const event = JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, 'utf8'));
         const numbers = new Set();
@@ -252,6 +467,13 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
             if (pull.user?.login === bot && typeof pull.merged_at === 'string' && Date.parse(pull.merged_at) > Date.now() - 7 * 24 * 60 * 60 * 1000)
                 numbers.add(pull.number);
         }
+        // Recover the current merge directly as well: unrelated issue activity
+        // cannot evict it from the recent-closed inventory used by scheduled retries.
+        const main = await request('GET', `repos/${c.repository}/branches/main`);
+        if (!shaPattern.test(main?.commit?.sha ?? '')) throw new Error('Invalid continuation source.');
+        const current = await request('GET', `repos/${c.repository}/commits/${main.commit.sha}/pulls?per_page=100`);
+        if (!Array.isArray(current)) throw new Error('Invalid current-merge association.');
+        for (const pull of current) if (mergedAssociation(pull, c, main.commit.sha)) numbers.add(pull.number);
         const results = [];
         for (const number of [...numbers].slice(0, 30)) {
             try { results.push(await reconcile(number)); }
