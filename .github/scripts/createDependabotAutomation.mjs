@@ -163,6 +163,7 @@ export function createDependabotAutomation(suppliedConfiguration, dependencies =
         if (!Array.isArray(response?.workflow_runs)) throw new Error('Invalid verification inventory.');
         const runs = response.workflow_runs.filter((run) => run.workflow_id === workflow.id &&
             ['pull_request', 'workflow_dispatch'].includes(run.event) && run.head_sha === pull.head.sha && run.head_branch === pull.head.ref &&
+            !(run.event === 'pull_request' && (run.conclusion === 'action_required' || run.status === 'waiting')) &&
             sameRepository(run.repository, c) && sameRepository(run.head_repository, c)).sort((a, b) => b.id - a.id);
         const run = runs[0];
         if (!run || run.status !== 'completed' || run.conclusion !== 'success' || !Number.isSafeInteger(run.run_attempt)) return;
